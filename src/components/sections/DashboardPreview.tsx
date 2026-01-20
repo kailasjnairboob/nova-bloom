@@ -35,7 +35,7 @@ const installations = [
 
 export const DashboardPreview = () => {
   return (
-    <section id="dashboard" className="py-24 relative">
+    <section className="py-12 relative">
       <div className="absolute inset-0 gradient-radial opacity-30" />
       
       <div className="container relative z-10 px-4 lg:px-8">

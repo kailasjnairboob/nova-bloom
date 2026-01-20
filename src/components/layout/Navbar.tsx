@@ -1,19 +1,22 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Zap, LayoutDashboard, Store, Gamepad2, Leaf, CreditCard, Wallet, Menu, X } from "lucide-react";
+import { Zap, LayoutDashboard, Store, Gamepad2, Leaf, CreditCard, Wallet, Menu, X, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
-  { name: "Dashboard", icon: LayoutDashboard, href: "#dashboard" },
-  { name: "Marketplace", icon: Store, href: "#marketplace" },
-  { name: "Gamification", icon: Gamepad2, href: "#gamification" },
-  { name: "Carbon Impact", icon: Leaf, href: "#carbon" },
-  { name: "Bill Payment", icon: CreditCard, href: "#billing" },
+  { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
+  { name: "Marketplace", icon: Store, href: "/marketplace" },
+  { name: "Gamification", icon: Gamepad2, href: "/gamification" },
+  { name: "Carbon Impact", icon: Leaf, href: "/carbon-impact" },
+  { name: "Bill Payment", icon: CreditCard, href: "/billing" },
 ];
 
 export const Navbar = () => {
-  const [activeItem, setActiveItem] = useState("Dashboard");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  const isActive = (href: string) => location.pathname === href;
 
   return (
     <motion.nav
@@ -24,39 +27,42 @@ export const Navbar = () => {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <motion.a
-            href="#"
-            className="flex items-center gap-2 group"
-            whileHover={{ scale: 1.02 }}
-          >
-            <div className="relative">
-              <Zap className="w-8 h-8 text-primary" />
-              <div className="absolute inset-0 blur-lg bg-primary/50 -z-10" />
-            </div>
-            <span className="font-display font-bold text-xl lg:text-2xl text-foreground">
-              Ener<span className="text-primary text-glow">Chain</span>
-            </span>
-          </motion.a>
+          <Link to="/">
+            <motion.div
+              className="flex items-center gap-2 group"
+              whileHover={{ scale: 1.02 }}
+            >
+              <div className="relative">
+                <Zap className="w-8 h-8 text-primary" />
+                <div className="absolute inset-0 blur-lg bg-primary/50 -z-10" />
+              </div>
+              <span className="font-display font-bold text-xl lg:text-2xl text-foreground">
+                Ener<span className="text-primary text-glow">Chain</span>
+              </span>
+            </motion.div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
-              <motion.a
+              <Link
                 key={item.name}
-                href={item.href}
-                onClick={() => setActiveItem(item.name)}
-                className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300",
-                  activeItem === item.name
-                    ? "bg-primary/20 text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                )}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                to={item.href}
               >
-                <item.icon className="w-4 h-4" />
-                <span className="text-sm font-medium">{item.name}</span>
-              </motion.a>
+                <motion.div
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300",
+                    isActive(item.href)
+                      ? "bg-primary/20 text-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  )}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <item.icon className="w-4 h-4" />
+                  <span className="text-sm font-medium">{item.name}</span>
+                </motion.div>
+              </Link>
             ))}
           </div>
 
@@ -76,13 +82,15 @@ export const Navbar = () => {
             </motion.div>
 
             {/* User Avatar */}
-            <motion.button
-              className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-display font-bold text-lg"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              K
-            </motion.button>
+            <Link to="/profile">
+              <motion.button
+                className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-display font-bold text-lg"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                K
+              </motion.button>
+            </Link>
 
             {/* Mobile Menu Toggle */}
             <button
@@ -103,24 +111,29 @@ export const Navbar = () => {
             className="lg:hidden pb-4"
           >
             {navItems.map((item) => (
-              <a
+              <Link
                 key={item.name}
-                href={item.href}
-                onClick={() => {
-                  setActiveItem(item.name);
-                  setMobileMenuOpen(false);
-                }}
+                to={item.href}
+                onClick={() => setMobileMenuOpen(false)}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                  activeItem === item.name
+                  isActive(item.href)
                     ? "bg-primary/20 text-primary"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 <item.icon className="w-5 h-5" />
                 <span className="font-medium">{item.name}</span>
-              </a>
+              </Link>
             ))}
+            <Link
+              to="/profile"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-muted-foreground hover:text-foreground"
+            >
+              <User className="w-5 h-5" />
+              <span className="font-medium">Profile</span>
+            </Link>
           </motion.div>
         )}
       </div>

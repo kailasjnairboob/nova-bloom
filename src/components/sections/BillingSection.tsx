@@ -31,7 +31,7 @@ const features = [
 
 export const BillingSection = () => {
   return (
-    <section id="billing" className="py-24 relative">
+    <section className="py-12 relative">
       <div className="absolute inset-0 grid-pattern opacity-30" />
       
       <div className="container relative z-10 px-4 lg:px-8">
