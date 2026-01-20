@@ -64,7 +64,7 @@ const comingSoon = [
 
 export const MarketplaceSection = () => {
   return (
-    <section id="marketplace" className="py-24 relative overflow-hidden">
+    <section className="py-12 relative overflow-hidden">
       <div className="absolute inset-0 gradient-dark" />
       <div className="absolute top-0 right-0 w-1/2 h-1/2 gradient-radial opacity-20" />
 

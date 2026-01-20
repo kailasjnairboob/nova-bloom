@@ -27,7 +27,7 @@ const leaderboard = [
 
 export const GamificationSection = () => {
   return (
-    <section id="gamification" className="py-24 relative">
+    <section className="py-12 relative">
       <div className="absolute inset-0 grid-pattern opacity-50" />
       <div className="absolute bottom-0 left-0 w-1/2 h-1/2 gradient-radial opacity-20" />
 

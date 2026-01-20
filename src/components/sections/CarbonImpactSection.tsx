@@ -31,7 +31,7 @@ const certificates = [
 
 export const CarbonImpactSection = () => {
   return (
-    <section id="carbon" className="py-24 relative overflow-hidden">
+    <section className="py-12 relative overflow-hidden">
       <div className="absolute inset-0 gradient-dark" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] rounded-full bg-gradient-to-br from-primary/5 to-transparent blur-3xl" />
 
