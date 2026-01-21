@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { Trophy, Target, Flame, Users, Gift, Star, Lock, Check, Clock } from "lucide-react";
+import { Trophy, Target, Flame, Users, Gift, Star, Lock, Check, Clock, Award, Sparkles } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { useAuth } from "@/contexts";
 
 const challenges = [
   { name: "Check Dashboard", xp: 5, tokens: 0.1, completed: true },
@@ -26,10 +27,12 @@ const leaderboard = [
 ];
 
 export const GamificationSection = () => {
+  const { user } = useAuth();
+
   return (
-    <section className="py-12 relative">
-      <div className="absolute inset-0 grid-pattern opacity-50" />
-      <div className="absolute bottom-0 left-0 w-1/2 h-1/2 gradient-radial opacity-20" />
+    <section className="py-12 relative bg-gradient-to-b from-muted/30 to-background">
+      <div className="absolute inset-0 grid-pattern opacity-30" />
+      <div className="absolute bottom-0 left-0 w-1/2 h-1/2 gradient-radial opacity-30" />
 
       <div className="container relative z-10 px-4 lg:px-8">
         {/* Section Header */}
@@ -39,8 +42,17 @@ export const GamificationSection = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Gamification <span className="text-accent text-glow-accent">Center</span>
+          <motion.div
+            initial={{ scale: 0 }}
+            whileInView={{ scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 mb-6"
+          >
+            <Sparkles className="w-4 h-4 text-accent" />
+            <span className="text-sm text-accent font-medium">Level Up Your Impact</span>
+          </motion.div>
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
+            Achievements <span className="text-accent">Center</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Complete challenges, earn badges, and climb the leaderboard while saving the planet.
@@ -56,33 +68,52 @@ export const GamificationSection = () => {
             className="glass-card p-6 rounded-2xl"
           >
             <div className="text-center mb-6">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-3xl font-display font-bold text-primary-foreground ring-4 ring-primary/30">
-                K
-              </div>
-              <h3 className="font-display text-2xl font-bold text-foreground">Kailas</h3>
-              <p className="text-accent font-semibold">Level 7 - Eco Warrior</p>
+              <motion.div 
+                className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-3xl font-display font-bold text-primary-foreground ring-4 ring-primary/20 shadow-lg"
+                whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
+              >
+                {user?.name?.charAt(0) || 'K'}
+              </motion.div>
+              <h3 className="font-display text-2xl font-bold text-foreground">{user?.name || 'Kailas'}</h3>
+              <p className="text-accent font-semibold">Level {user?.level || 7} - {user?.levelTitle || 'Eco Warrior'}</p>
             </div>
 
             <div className="mb-6">
               <div className="flex items-center justify-between text-sm mb-2">
                 <span className="text-muted-foreground">XP Progress</span>
-                <span className="font-display font-semibold text-foreground">2,450 / 5,000</span>
+                <span className="font-display font-semibold text-foreground">
+                  {user?.xp?.toLocaleString() || '2,450'} / {user?.xpRequired?.toLocaleString() || '5,000'}
+                </span>
               </div>
-              <Progress value={49} className="h-3 bg-muted" />
+              <div className="relative">
+                <Progress value={49} className="h-3" />
+                <motion.div
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                  style={{ width: '30%' }}
+                  animate={{ x: ['-100%', '400%'] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                />
+              </div>
               <p className="text-xs text-muted-foreground mt-2">555 XP to Carbon Champion</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-center p-3 rounded-xl bg-muted/50">
+              <motion.div 
+                className="text-center p-3 rounded-xl bg-muted"
+                whileHover={{ scale: 1.05 }}
+              >
                 <div className="font-display text-xl font-bold text-primary">34.2</div>
                 <p className="text-xs text-muted-foreground">Tokens Earned</p>
-              </div>
-              <div className="text-center p-3 rounded-xl bg-muted/50">
+              </motion.div>
+              <motion.div 
+                className="text-center p-3 rounded-xl bg-muted"
+                whileHover={{ scale: 1.05 }}
+              >
                 <div className="font-display text-xl font-bold text-accent flex items-center justify-center gap-1">
                   14 <Flame className="w-4 h-4" />
                 </div>
                 <p className="text-xs text-muted-foreground">Day Streak</p>
-              </div>
+              </motion.div>
             </div>
           </motion.div>
 
@@ -94,9 +125,13 @@ export const GamificationSection = () => {
             className="glass-card p-6 rounded-2xl"
           >
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 rounded-lg bg-accent/20">
+              <motion.div 
+                className="p-2 rounded-lg bg-accent/10"
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
                 <Target className="w-5 h-5 text-accent" />
-              </div>
+              </motion.div>
               <h3 className="font-display text-xl font-semibold text-foreground">Daily Challenges</h3>
             </div>
 
@@ -108,16 +143,23 @@ export const GamificationSection = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className={`p-4 rounded-xl border ${
+                  whileHover={{ scale: 1.02, x: 4 }}
+                  className={`p-4 rounded-xl border transition-all ${
                     challenge.completed 
-                      ? 'bg-primary/10 border-primary/30' 
-                      : 'bg-muted/30 border-border/50'
+                      ? 'bg-primary/5 border-primary/30' 
+                      : 'bg-muted/50 border-border'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium text-foreground">{challenge.name}</span>
                     {challenge.completed ? (
-                      <Check className="w-5 h-5 text-primary" />
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", bounce: 0.5 }}
+                      >
+                        <Check className="w-5 h-5 text-primary" />
+                      </motion.div>
                     ) : challenge.progress ? (
                       <span className="text-sm text-muted-foreground">{challenge.current}/{challenge.target}</span>
                     ) : (
@@ -144,9 +186,13 @@ export const GamificationSection = () => {
             className="glass-card p-6 rounded-2xl"
           >
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 rounded-lg bg-primary/20">
+              <motion.div 
+                className="p-2 rounded-lg bg-primary/10"
+                animate={{ y: [0, -4, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
                 <Trophy className="w-5 h-5 text-primary" />
-              </div>
+              </motion.div>
               <h3 className="font-display text-xl font-semibold text-foreground">Global Leaderboard</h3>
             </div>
 
@@ -158,13 +204,20 @@ export const GamificationSection = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className={`flex items-center gap-3 p-3 rounded-xl ${
+                  whileHover={{ scale: 1.02, x: 4 }}
+                  className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
                     user.isUser 
-                      ? 'bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30' 
-                      : 'bg-muted/30'
+                      ? 'bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 shadow-sm' 
+                      : 'bg-muted'
                   }`}
                 >
-                  <span className="text-2xl w-8 text-center">{user.avatar}</span>
+                  <motion.span 
+                    className="text-2xl w-8 text-center"
+                    animate={user.rank <= 3 ? { scale: [1, 1.2, 1] } : {}}
+                    transition={{ duration: 2, repeat: Infinity, delay: user.rank * 0.3 }}
+                  >
+                    {user.avatar}
+                  </motion.span>
                   <div className="flex-1 min-w-0">
                     <p className={`font-medium truncate ${user.isUser ? 'text-primary' : 'text-foreground'}`}>
                       {user.name} {user.isUser && <span className="text-xs">(You)</span>}
@@ -196,13 +249,18 @@ export const GamificationSection = () => {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.05 }}
+                whileHover={badge.unlocked ? { scale: 1.08, y: -4 } : { scale: 1.02 }}
                 className={`glass-card p-4 rounded-xl text-center ${
-                  badge.unlocked ? 'hover:border-primary/40' : 'opacity-60'
-                } transition-all duration-300`}
+                  badge.unlocked ? 'cursor-pointer' : 'opacity-60'
+                }`}
               >
-                <div className={`text-4xl mb-2 ${!badge.unlocked && 'grayscale'}`}>
+                <motion.div 
+                  className={`text-4xl mb-2 ${!badge.unlocked && 'grayscale'}`}
+                  animate={badge.unlocked ? { rotate: [0, -5, 5, 0] } : {}}
+                  transition={{ duration: 3, repeat: Infinity, delay: index * 0.2 }}
+                >
                   {badge.emoji}
-                </div>
+                </motion.div>
                 <p className="font-medium text-sm text-foreground mb-1">{badge.name}</p>
                 {badge.unlocked ? (
                   <p className="text-xs text-primary">{badge.date}</p>

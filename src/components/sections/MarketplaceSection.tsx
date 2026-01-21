@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Sun, Wind, Zap, MapPin, Star, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useEnergy } from "@/contexts";
 
 const locations = [
   {
