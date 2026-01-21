@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { Leaf, TreePine, Car, Home, Wind, Download, Share2 } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 import { Button } from "@/components/ui/button";
+import { useEnergy } from "@/contexts";
 
 const monthlyData = [
   { month: "Jan", co2: 95 },
