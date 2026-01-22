@@ -1,8 +1,10 @@
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { Leaf, TreePine, Car, Home, Wind, Download, Share2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 import { Button } from "@/components/ui/button";
 import { useEnergy } from "@/contexts";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const monthlyData = [
   { month: "Jan", co2: 95 },
@@ -17,20 +19,90 @@ const monthlyData = [
   { month: "Oct", co2: 114 },
 ];
 
-const impactStats = [
-  { icon: TreePine, value: "62", label: "Trees Planted", sublabel: "annually equivalent" },
-  { icon: Car, value: "3", label: "Cars Off Road", sublabel: "for 1 year" },
-  { icon: Home, value: "28", label: "Home-Days", sublabel: "powered" },
-  { icon: Wind, value: "3,720", label: "Lbs Pollution", sublabel: "avoided" },
-];
+// Animated counter component
+const AnimatedCounter = ({ value, suffix = "" }: { value: number; suffix?: string }) => {
+  const [displayValue, setDisplayValue] = useState(0);
+  const motionValue = useMotionValue(0);
+  const rounded = useTransform(motionValue, (latest) => Math.round(latest));
 
-const certificates = [
-  { name: "100 kg CO₂ Milestone", status: "unlocked", date: "15-Sep-2025", icon: "🏆" },
-  { name: "1 Ton CO₂ Milestone", status: "in-progress", progress: 92.4, icon: "🌍" },
-  { name: "10 Ton CO₂ Masterpiece", status: "locked", icon: "🔓" },
-];
+  useEffect(() => {
+    const controls = animate(motionValue, value, { duration: 2 });
+    const unsubscribe = rounded.on("change", (v) => setDisplayValue(v));
+    return () => {
+      controls.stop();
+      unsubscribe();
+    };
+  }, [value, motionValue, rounded]);
+
+  return <>{displayValue.toLocaleString()}{suffix}</>;
+};
 
 export const CarbonImpactSection = () => {
+  const { stats } = useEnergy();
+
+  // Calculate impact stats based on actual CO2 saved
+  const impactStats = [
+    { 
+      icon: TreePine, 
+      value: Math.round(stats.lifetimeCo2Saved / 20), 
+      label: "Trees Planted", 
+      sublabel: "annually equivalent" 
+    },
+    { 
+      icon: Car, 
+      value: Math.round(stats.lifetimeCo2Saved / 400), 
+      label: "Cars Off Road", 
+      sublabel: "for 1 year" 
+    },
+    { 
+      icon: Home, 
+      value: Math.round(stats.lifetimeCo2Saved / 45), 
+      label: "Home-Days", 
+      sublabel: "powered" 
+    },
+    { 
+      icon: Wind, 
+      value: Math.round(stats.lifetimeCo2Saved * 3), 
+      label: "Lbs Pollution", 
+      sublabel: "avoided" 
+    },
+  ];
+
+  // Calculate certificate progress based on actual stats
+  const certificates = [
+    { 
+      name: "100 kg CO₂ Milestone", 
+      status: stats.lifetimeCo2Saved >= 100 ? "unlocked" : "in-progress",
+      progress: Math.min(100, (stats.lifetimeCo2Saved / 100) * 100),
+      date: "15-Sep-2025", 
+      icon: "🏆" 
+    },
+    { 
+      name: "1 Ton CO₂ Milestone", 
+      status: stats.lifetimeCo2Saved >= 1000 ? "unlocked" : stats.lifetimeCo2Saved >= 100 ? "in-progress" : "locked",
+      progress: Math.min(100, (stats.lifetimeCo2Saved / 1000) * 100),
+      icon: "🌍" 
+    },
+    { 
+      name: "10 Ton CO₂ Masterpiece", 
+      status: stats.lifetimeCo2Saved >= 10000 ? "unlocked" : stats.lifetimeCo2Saved >= 1000 ? "in-progress" : "locked",
+      progress: Math.min(100, (stats.lifetimeCo2Saved / 10000) * 100),
+      icon: "🔓" 
+    },
+  ];
+
+  const handleShare = () => {
+    // BACKEND INTEGRATION POINT
+    // Example: await shareApi.shareImpact(stats.lifetimeCo2Saved);
+    toast.success("Impact shared! (Backend integration needed)");
+  };
+
+  const handleDownloadCertificate = (certName: string) => {
+    // BACKEND INTEGRATION POINT
+    // Example: const pdf = await certificateApi.download(certName);
+    toast.success(`Downloading ${certName}... (Backend integration needed)`);
+  };
+
   return (
     <section className="py-12 relative overflow-hidden">
       <div className="absolute inset-0 gradient-dark" />
@@ -70,7 +142,7 @@ export const CarbonImpactSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            1,245
+            <AnimatedCounter value={stats.lifetimeCo2Saved} />
             <span className="text-3xl md:text-4xl text-foreground ml-2">kg</span>
           </motion.div>
 
@@ -85,10 +157,13 @@ export const CarbonImpactSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.05 }}
                 className="p-4 rounded-xl bg-muted/30"
               >
                 <stat.icon className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="font-display text-2xl font-bold text-foreground">{stat.value}</div>
+                <div className="font-display text-2xl font-bold text-foreground">
+                  <AnimatedCounter value={stat.value} />
+                </div>
                 <p className="text-sm text-foreground font-medium">{stat.label}</p>
                 <p className="text-xs text-muted-foreground">{stat.sublabel}</p>
               </motion.div>
@@ -113,20 +188,20 @@ export const CarbonImpactSection = () => {
                     dataKey="month" 
                     axisLine={false} 
                     tickLine={false}
-                    tick={{ fill: 'hsl(220 10% 55%)', fontSize: 12 }}
+                    tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                   />
                   <YAxis 
                     axisLine={false} 
                     tickLine={false}
-                    tick={{ fill: 'hsl(220 10% 55%)', fontSize: 12 }}
+                    tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                     unit=" kg"
                   />
                   <Tooltip 
                     contentStyle={{
-                      backgroundColor: 'hsl(220 25% 8%)',
-                      border: '1px solid hsl(160 40% 25%)',
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
                       borderRadius: '8px',
-                      color: 'hsl(150 100% 95%)',
+                      color: 'hsl(var(--foreground))',
                     }}
                     formatter={(value) => [`${value} kg CO₂`, 'Saved']}
                   />
@@ -134,11 +209,12 @@ export const CarbonImpactSection = () => {
                     dataKey="co2" 
                     fill="url(#greenGradient)"
                     radius={[4, 4, 0, 0]}
+                    animationDuration={1500}
                   />
                   <defs>
                     <linearGradient id="greenGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="hsl(160 84% 45%)" />
-                      <stop offset="100%" stopColor="hsl(160 84% 35%)" />
+                      <stop offset="0%" stopColor="hsl(var(--primary))" />
+                      <stop offset="100%" stopColor="hsl(var(--primary) / 0.6)" />
                     </linearGradient>
                   </defs>
                 </BarChart>
@@ -163,6 +239,7 @@ export const CarbonImpactSection = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
+                  whileHover={{ scale: 1.02 }}
                   className={`p-4 rounded-xl border ${
                     cert.status === 'unlocked' 
                       ? 'bg-primary/10 border-primary/30' 
@@ -180,7 +257,7 @@ export const CarbonImpactSection = () => {
                           <p className="text-xs text-primary">Unlocked: {cert.date}</p>
                         )}
                         {cert.status === 'in-progress' && (
-                          <p className="text-xs text-accent">{cert.progress}% Complete</p>
+                          <p className="text-xs text-accent">{cert.progress.toFixed(1)}% Complete</p>
                         )}
                         {cert.status === 'locked' && (
                           <p className="text-xs text-muted-foreground">Locked</p>
@@ -189,10 +266,20 @@ export const CarbonImpactSection = () => {
                     </div>
                     {cert.status === 'unlocked' && (
                       <div className="flex gap-2">
-                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="h-8 w-8 p-0"
+                          onClick={() => handleDownloadCertificate(cert.name)}
+                        >
                           <Download className="w-4 h-4" />
                         </Button>
-                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="h-8 w-8 p-0"
+                          onClick={handleShare}
+                        >
                           <Share2 className="w-4 h-4" />
                         </Button>
                       </div>
@@ -203,7 +290,10 @@ export const CarbonImpactSection = () => {
             </div>
 
             <div className="mt-6 pt-6 border-t border-border">
-              <Button className="w-full bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display">
+              <Button 
+                className="w-full bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display"
+                onClick={handleShare}
+              >
                 <Share2 className="w-4 h-4 mr-2" />
                 Share Your Impact
               </Button>

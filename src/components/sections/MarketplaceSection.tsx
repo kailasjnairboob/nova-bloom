@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { Sun, Wind, Zap, MapPin, Star, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEnergy } from "@/contexts";
+import { useEnergy, useWallet } from "@/contexts";
+import { toast } from "sonner";
 
 const locations = [
   {
@@ -64,6 +65,35 @@ const comingSoon = [
 ];
 
 export const MarketplaceSection = () => {
+  const { addInstallation } = useEnergy();
+  const { isConnected } = useWallet();
+
+  const handlePlanInstallation = async (location: typeof locations[0]) => {
+    if (!isConnected) {
+      toast.error("Please connect your wallet first");
+      return;
+    }
+
+    // BACKEND INTEGRATION POINT
+    // This is where you would call the API to initiate an installation
+    // Example: await installationApi.planInstallation(location.id);
+    
+    toast.success(`Planning installation at ${location.name}...`);
+    
+    // For demo, we add a mock installation
+    await addInstallation({
+      name: location.name,
+      type: location.type as 'Solar' | 'Wind' | 'Hybrid',
+      location: location.location,
+      capacity: location.capacity,
+      capacityKw: parseFloat(location.capacity),
+      status: 'inactive',
+      efficiency: 0,
+      todayUnits: 0,
+      monthUnits: 0,
+    });
+  };
+
   return (
     <section className="py-12 relative overflow-hidden">
       <div className="absolute inset-0 gradient-dark" />
@@ -98,6 +128,7 @@ export const MarketplaceSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
+              whileHover={{ y: -5 }}
               className="group"
             >
               <div className="glass-card rounded-2xl overflow-hidden hover:border-primary/40 transition-all duration-500">
@@ -108,9 +139,12 @@ export const MarketplaceSection = () => {
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className={`p-3 rounded-xl bg-gradient-to-br ${location.gradient} bg-opacity-20`}>
+                      <motion.div 
+                        className={`p-3 rounded-xl bg-gradient-to-br ${location.gradient} bg-opacity-20`}
+                        whileHover={{ rotate: 10 }}
+                      >
                         <location.icon className="w-6 h-6 text-foreground" />
-                      </div>
+                      </motion.div>
                       <div>
                         <h3 className="font-display text-xl font-semibold text-foreground">{location.name}</h3>
                         <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
@@ -154,6 +188,7 @@ export const MarketplaceSection = () => {
                   {/* CTA */}
                   <Button 
                     className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-display font-semibold group"
+                    onClick={() => handlePlanInstallation(location)}
                   >
                     Plan Your Installation
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -174,9 +209,10 @@ export const MarketplaceSection = () => {
           <h3 className="font-display text-xl font-semibold text-muted-foreground mb-6">Coming Soon - Global Expansion</h3>
           <div className="flex flex-wrap justify-center gap-4">
             {comingSoon.map((loc) => (
-              <div
+              <motion.div
                 key={loc.name}
                 className="glass-card px-5 py-3 rounded-xl opacity-60 hover:opacity-80 transition-opacity cursor-not-allowed"
+                whileHover={{ scale: 1.02 }}
               >
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">{loc.flag}</span>
@@ -185,7 +221,7 @@ export const MarketplaceSection = () => {
                     <p className="text-xs text-muted-foreground">{loc.location}</p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </motion.div>
