@@ -6,21 +6,40 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-
-const transactions = [
-  { id: 1, type: "Earned", amount: "+245.5", date: "28-Oct-2025", balance: "387,452.0" },
-  { id: 2, type: "Earned", amount: "+189.2", date: "27-Oct-2025", balance: "387,206.5" },
-  { id: 3, type: "Redeemed", amount: "-1,000", date: "26-Oct-2025", balance: "387,017.3" },
-  { id: 4, type: "Earned", amount: "+267.8", date: "25-Oct-2025", balance: "388,017.3" },
-  { id: 5, type: "Sent", amount: "-50", date: "24-Oct-2025", balance: "387,749.5" },
-];
-
-const installations = [
-  { name: "Rajasthan Solar", type: "Solar", capacity: "2.2 kW", status: "active", icon: Sun },
-  { name: "Tamil Nadu Wind", type: "Wind", capacity: "1.5 kW", status: "active", icon: Wind },
-];
+import { useAuth, useWallet, useEnergy } from "@/contexts";
+import { toast } from "sonner";
 
 const Profile = () => {
+  const { user, logout } = useAuth();
+  const { isConnected, shortAddress, address, network, disconnect } = useWallet();
+  const { stats, installations } = useEnergy();
+
+  const handleCopyAddress = () => {
+    if (address) {
+      navigator.clipboard.writeText(address);
+      toast.success("Address copied to clipboard");
+    }
+  };
+
+  const handleDisconnect = async () => {
+    await disconnect();
+    toast.success("Wallet disconnected");
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    toast.success("Logged out successfully");
+  };
+
+  // Map installation type to icon
+  const getInstallationIcon = (type: string) => {
+    switch (type) {
+      case 'Solar': return Sun;
+      case 'Wind': return Wind;
+      default: return Zap;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
@@ -36,26 +55,39 @@ const Profile = () => {
               {/* Profile Card */}
               <div className="glass-card p-6 rounded-2xl text-center">
                 <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-4xl font-display font-bold text-primary-foreground ring-4 ring-primary/30">
-                  K
+                  {user?.name?.charAt(0) || 'U'}
                 </div>
-                <h2 className="font-display text-2xl font-bold text-foreground mb-1">Kailas</h2>
-                <p className="text-accent font-semibold mb-4">Level 7 - Eco Warrior</p>
+                <h2 className="font-display text-2xl font-bold text-foreground mb-1">
+                  {user?.name || 'User'}
+                </h2>
+                <p className="text-accent font-semibold mb-4">
+                  Level {user?.level || 1} - {user?.levelTitle || 'Beginner'}
+                </p>
                 
                 <div className="mb-4">
                   <div className="flex items-center justify-between text-sm mb-2">
                     <span className="text-muted-foreground">XP Progress</span>
-                    <span className="font-display font-semibold text-foreground">2,450 / 5,000</span>
+                    <span className="font-display font-semibold text-foreground">
+                      {user?.xp?.toLocaleString() || 0} / {user?.xpRequired?.toLocaleString() || 1000}
+                    </span>
                   </div>
-                  <Progress value={49} className="h-3" />
+                  <Progress 
+                    value={user ? (user.xp / user.xpRequired) * 100 : 0} 
+                    className="h-3" 
+                  />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div className="p-3 rounded-xl bg-muted/50">
-                    <div className="font-display text-lg font-bold text-primary">387,452</div>
+                    <div className="font-display text-lg font-bold text-primary">
+                      {stats.tokenBalance.toLocaleString()}
+                    </div>
                     <p className="text-muted-foreground">Tokens</p>
                   </div>
                   <div className="p-3 rounded-xl bg-muted/50">
-                    <div className="font-display text-lg font-bold text-accent">1,245 kg</div>
+                    <div className="font-display text-lg font-bold text-accent">
+                      {stats.lifetimeCo2Saved.toLocaleString()} kg
+                    </div>
                     <p className="text-muted-foreground">CO₂ Saved</p>
                   </div>
                 </div>
@@ -69,27 +101,33 @@ const Profile = () => {
                   </div>
                   <h3 className="font-display text-lg font-semibold text-foreground">Wallet</h3>
                   <span className="ml-auto flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                    <span className="text-xs text-primary font-medium">Connected</span>
+                    <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-primary animate-pulse' : 'bg-muted-foreground'}`} />
+                    <span className={`text-xs font-medium ${isConnected ? 'text-primary' : 'text-muted-foreground'}`}>
+                      {isConnected ? 'Connected' : 'Disconnected'}
+                    </span>
                   </span>
                 </div>
 
-                <div className="p-3 rounded-xl bg-muted/50 mb-4">
-                  <p className="text-xs text-muted-foreground mb-1">Wallet Address</p>
-                  <div className="flex items-center gap-2">
-                    <code className="text-sm text-foreground font-mono">4A1z...xY9k</code>
-                    <Button size="icon" variant="ghost" className="h-6 w-6">
-                      <Copy className="w-3 h-3" />
-                    </Button>
-                    <Button size="icon" variant="ghost" className="h-6 w-6">
-                      <ExternalLink className="w-3 h-3" />
-                    </Button>
+                {isConnected && (
+                  <div className="p-3 rounded-xl bg-muted/50 mb-4">
+                    <p className="text-xs text-muted-foreground mb-1">Wallet Address</p>
+                    <div className="flex items-center gap-2">
+                      <code className="text-sm text-foreground font-mono">{shortAddress}</code>
+                      <Button size="icon" variant="ghost" className="h-6 w-6" onClick={handleCopyAddress}>
+                        <Copy className="w-3 h-3" />
+                      </Button>
+                      <Button size="icon" variant="ghost" className="h-6 w-6">
+                        <ExternalLink className="w-3 h-3" />
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Network</span>
-                  <span className="text-foreground font-medium">Solana Devnet</span>
+                  <span className="text-foreground font-medium capitalize">
+                    Solana {network.replace('-', ' ')}
+                  </span>
                 </div>
               </div>
 
@@ -109,9 +147,13 @@ const Profile = () => {
                     <Shield className="w-4 h-4 mr-3" />
                     Security
                   </Button>
-                  <Button variant="outline" className="w-full justify-start border-destructive/50 text-destructive hover:bg-destructive/10">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start border-destructive/50 text-destructive hover:bg-destructive/10"
+                    onClick={isConnected ? handleDisconnect : handleLogout}
+                  >
                     <LogOut className="w-4 h-4 mr-3" />
-                    Disconnect Wallet
+                    {isConnected ? 'Disconnect Wallet' : 'Logout'}
                   </Button>
                 </div>
               </div>
@@ -133,40 +175,45 @@ const Profile = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {installations.map((install) => (
-                    <div
-                      key={install.name}
-                      className="p-4 rounded-xl bg-muted/30 border border-border/50"
-                    >
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2 rounded-lg bg-primary/20">
-                          <install.icon className="w-5 h-5 text-primary" />
+                  {installations.map((install) => {
+                    const InstallIcon = getInstallationIcon(install.type);
+                    return (
+                      <div
+                        key={install.id}
+                        className="p-4 rounded-xl bg-muted/30 border border-border/50"
+                      >
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="p-2 rounded-lg bg-primary/20">
+                            <InstallIcon className="w-5 h-5 text-primary" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-foreground">{install.name}</h4>
+                            <p className="text-xs text-muted-foreground">{install.type} • {install.capacity}</p>
+                          </div>
+                          <span className="ml-auto flex items-center gap-1.5">
+                            <span className={`w-2 h-2 rounded-full ${install.status === 'active' ? 'bg-primary animate-pulse' : 'bg-muted-foreground'}`} />
+                            <span className={`text-xs font-medium uppercase ${install.status === 'active' ? 'text-primary' : 'text-muted-foreground'}`}>
+                              {install.status === 'active' ? 'Live' : install.status}
+                            </span>
+                          </span>
                         </div>
-                        <div>
-                          <h4 className="font-semibold text-foreground">{install.name}</h4>
-                          <p className="text-xs text-muted-foreground">{install.type} • {install.capacity}</p>
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          <div>
+                            <p className="text-muted-foreground">Today</p>
+                            <p className="font-semibold text-foreground">{install.todayUnits} Units</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">This Month</p>
+                            <p className="font-semibold text-accent">{install.monthUnits} Units</p>
+                          </div>
                         </div>
-                        <span className="ml-auto flex items-center gap-1.5">
-                          <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                          <span className="text-xs text-primary font-medium uppercase">Live</span>
-                        </span>
                       </div>
-                      <div className="grid grid-cols-2 gap-2 text-sm">
-                        <div>
-                          <p className="text-muted-foreground">Today</p>
-                          <p className="font-semibold text-foreground">8.5 Units</p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">This Month</p>
-                          <p className="font-semibold text-accent">245 Units</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Transaction History */}
+              {/* Transaction History - placeholder for backend */}
               <div className="glass-card p-6 rounded-2xl">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="font-display text-xl font-semibold text-foreground">Transaction History</h3>
@@ -175,58 +222,32 @@ const Profile = () => {
                   </Button>
                 </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-border/50">
-                        <th className="text-left py-3 px-2 text-sm font-medium text-muted-foreground">Date</th>
-                        <th className="text-left py-3 px-2 text-sm font-medium text-muted-foreground">Type</th>
-                        <th className="text-right py-3 px-2 text-sm font-medium text-muted-foreground">Amount</th>
-                        <th className="text-right py-3 px-2 text-sm font-medium text-muted-foreground">Balance</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {transactions.map((tx) => (
-                        <tr key={tx.id} className="border-b border-border/30 hover:bg-muted/20">
-                          <td className="py-3 px-2 text-sm text-foreground">{tx.date}</td>
-                          <td className="py-3 px-2">
-                            <span className={`text-sm font-medium ${
-                              tx.type === 'Earned' ? 'text-primary' : 
-                              tx.type === 'Redeemed' ? 'text-accent' : 'text-muted-foreground'
-                            }`}>
-                              {tx.type}
-                            </span>
-                          </td>
-                          <td className={`py-3 px-2 text-sm text-right font-display font-semibold ${
-                            tx.amount.startsWith('+') ? 'text-primary' : 'text-accent'
-                          }`}>
-                            {tx.amount}
-                          </td>
-                          <td className="py-3 px-2 text-sm text-right text-foreground font-mono">
-                            {tx.balance}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="text-center py-8 text-muted-foreground">
+                  <p>Transaction history will be available after backend integration.</p>
+                  <p className="text-sm mt-2">Connect your wallet to view transactions.</p>
                 </div>
               </div>
 
               {/* Stats Summary */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  { label: "Total Earned", value: "412,500", icon: TrendingUp, color: "primary" },
-                  { label: "Total Redeemed", value: "25,048", icon: Zap, color: "accent" },
-                  { label: "Days Active", value: "45", icon: Calendar, color: "primary" },
-                  { label: "Referrals", value: "2", icon: User, color: "accent" },
+                  { label: "Total Earned", value: stats.tokenBalance.toLocaleString(), icon: TrendingUp, color: "text-primary" },
+                  { label: "Today Generation", value: stats.todayGeneration.toLocaleString(), icon: Zap, color: "text-accent" },
+                  { label: "Efficiency", value: `${stats.efficiency}%`, icon: Calendar, color: "text-primary" },
+                  { label: "CO₂ Saved", value: `${stats.lifetimeCo2Saved}`, icon: User, color: "text-accent" },
                 ].map((stat) => (
-                  <div key={stat.label} className="glass-card p-4 rounded-xl">
+                  <motion.div 
+                    key={stat.label} 
+                    className="glass-card p-4 rounded-xl"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
                     <div className="flex items-center gap-2 mb-2">
-                      <stat.icon className={`w-4 h-4 text-${stat.color}`} />
+                      <stat.icon className={`w-4 h-4 ${stat.color}`} />
                       <span className="text-xs text-muted-foreground">{stat.label}</span>
                     </div>
                     <div className="font-display text-xl font-bold text-foreground">{stat.value}</div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </motion.div>
