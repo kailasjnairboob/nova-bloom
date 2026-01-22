@@ -18,7 +18,7 @@ const socialLinks = [
 export const FooterSection = () => {
   return (
     <footer className="relative py-16 border-t border-border/50">
-      <div className="absolute inset-0 gradient-dark" />
+      <div className="absolute inset-0 gradient-dark dot-pattern" />
       
       <div className="container relative z-10 px-4 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-12">
