@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
-import { Zap, TrendingUp, Battery, Sun, Wind, ArrowUpRight, Activity, RefreshCw } from "lucide-react";
+import { Zap, TrendingUp, Battery, Sun, Wind, ArrowUpRight, Activity, Radio, Wifi } from "lucide-react";
 import { 
   AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, 
   LineChart, Line, BarChart, Bar, ComposedChart,
@@ -7,7 +7,9 @@ import {
 } from "recharts";
 import { useEnergy } from "@/contexts";
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { LiveDataStream } from "@/components/dashboard/LiveDataStream";
+import { PowerWaveform } from "@/components/dashboard/PowerWaveform";
+import { RealtimeStats } from "@/components/dashboard/RealtimeStats";
 
 // Animated counter component
 const AnimatedCounter = ({ value, duration = 2 }: { value: number; duration?: number }) => {
@@ -272,67 +274,137 @@ export const DashboardPreview = () => {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="glass-card p-6 rounded-xl h-fit sticky top-24"
+            className="space-y-4 h-fit sticky top-24"
           >
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-display text-lg font-semibold text-foreground">Live Generation</h3>
-              <button
-                onClick={() => setIsLive(!isLive)}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full transition-colors ${
-                  isLive ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
-                }`}
-              >
-                <motion.span 
-                  className={`w-2 h-2 rounded-full ${isLive ? 'bg-primary' : 'bg-muted-foreground'}`}
-                  animate={isLive ? { scale: [1, 1.3, 1] } : {}}
-                  transition={{ duration: 0.8, repeat: Infinity }}
-                />
-                <span className="text-xs font-medium">{isLive ? 'LIVE' : 'PAUSED'}</span>
-              </button>
+            {/* Connection Status Header */}
+            <div className="glass-card p-4 rounded-xl">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <motion.div
+                    animate={isLive ? { rotate: 360 } : {}}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Wifi className={`w-4 h-4 ${isLive ? 'text-primary' : 'text-muted-foreground'}`} />
+                  </motion.div>
+                  <span className="text-sm font-medium text-foreground">WebSocket</span>
+                </div>
+                <button
+                  onClick={() => setIsLive(!isLive)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all ${
+                    isLive 
+                      ? 'bg-primary/10 text-primary border border-primary/20' 
+                      : 'bg-muted text-muted-foreground border border-transparent'
+                  }`}
+                >
+                  <motion.span 
+                    className={`w-2 h-2 rounded-full ${isLive ? 'bg-primary' : 'bg-muted-foreground'}`}
+                    animate={isLive ? { scale: [1, 1.4, 1], opacity: [1, 0.6, 1] } : {}}
+                    transition={{ duration: 1, repeat: Infinity }}
+                  />
+                  <span className="text-xs font-semibold">{isLive ? 'CONNECTED' : 'DISCONNECTED'}</span>
+                </button>
+              </div>
+
+              {/* Connection stats */}
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="p-2 rounded-lg bg-muted/50">
+                  <p className="text-xs text-muted-foreground">Status</p>
+                  <p className={`text-xs font-semibold ${isLive ? 'text-primary' : 'text-muted-foreground'}`}>
+                    {isLive ? 'Active' : 'Idle'}
+                  </p>
+                </div>
+                <div className="p-2 rounded-lg bg-muted/50">
+                  <p className="text-xs text-muted-foreground">Ping</p>
+                  <p className="text-xs font-semibold text-foreground">{isLive ? '24ms' : '--'}</p>
+                </div>
+                <div className="p-2 rounded-lg bg-muted/50">
+                  <p className="text-xs text-muted-foreground">Uptime</p>
+                  <p className="text-xs font-semibold text-foreground">{isLive ? '99.9%' : '--'}</p>
+                </div>
+              </div>
             </div>
 
-            <div className="text-center mb-8">
-              <motion.div
-                className="font-display text-5xl font-bold text-primary mb-2"
-                animate={isLive ? { opacity: [0.8, 1, 0.8] } : {}}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <AnimatedCounter value={stats.activePower} />
-              </motion.div>
-              <p className="text-muted-foreground">Watts Generated</p>
+            {/* Live Power Display */}
+            <div className="glass-card p-5 rounded-xl">
+              <div className="text-center mb-4">
+                <p className="text-xs text-muted-foreground mb-1">Active Power</p>
+                <motion.div
+                  className="font-display text-4xl font-bold text-primary"
+                  animate={isLive ? { 
+                    textShadow: [
+                      '0 0 10px hsl(160 84% 39% / 0.3)',
+                      '0 0 20px hsl(160 84% 39% / 0.5)',
+                      '0 0 10px hsl(160 84% 39% / 0.3)',
+                    ]
+                  } : {}}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  <AnimatedCounter value={stats.activePower} />
+                  <span className="text-lg ml-1">W</span>
+                </motion.div>
+              </div>
+
+              {/* Live indicator bars */}
+              <div className="flex items-center justify-center gap-0.5 mb-4">
+                {Array.from({ length: 20 }).map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="w-1 rounded-full bg-primary"
+                    animate={isLive ? {
+                      height: [8, 16 + Math.random() * 16, 8],
+                      opacity: [0.4, 1, 0.4],
+                    } : { height: 4, opacity: 0.2 }}
+                    transition={{
+                      duration: 0.5 + Math.random() * 0.5,
+                      delay: i * 0.05,
+                      repeat: Infinity,
+                    }}
+                  />
+                ))}
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <motion.div 
+                  className="p-3 rounded-lg bg-muted/50"
+                  whileHover={{ scale: 1.02 }}
+                >
+                  <p className="text-xs text-muted-foreground">Token Rate</p>
+                  <p className="font-display font-semibold text-accent">+1.2/min</p>
+                </motion.div>
+                <motion.div 
+                  className="p-3 rounded-lg bg-muted/50"
+                  whileHover={{ scale: 1.02 }}
+                >
+                  <p className="text-xs text-muted-foreground">Peak Today</p>
+                  <p className="font-display font-semibold text-foreground">{stats.peakToday.value}W</p>
+                </motion.div>
+              </div>
             </div>
 
-            <div className="space-y-4">
-              <motion.div 
-                className="flex items-center justify-between p-3 rounded-lg bg-muted"
-                whileHover={{ x: 4 }}
-              >
-                <span className="text-sm text-muted-foreground">Token Rate</span>
-                <span className="font-display font-semibold text-accent">+1.2/min</span>
-              </motion.div>
-              <motion.div 
-                className="flex items-center justify-between p-3 rounded-lg bg-muted"
-                whileHover={{ x: 4 }}
-              >
-                <span className="text-sm text-muted-foreground">Peak Today</span>
-                <span className="font-display font-semibold text-foreground">{stats.peakToday.value} W @ {stats.peakToday.time}</span>
-              </motion.div>
-              <motion.div 
-                className="flex items-center justify-between p-3 rounded-lg bg-muted"
-                whileHover={{ x: 4 }}
-              >
-                <span className="text-sm text-muted-foreground">Weather</span>
-                <span className="font-display font-semibold text-foreground">☀️ Sunny, 12 km/h</span>
-              </motion.div>
-            </div>
+            {/* Power Waveform */}
+            <PowerWaveform isLive={isLive} power={stats.activePower} />
 
-            <div className="mt-6 pt-6 border-t border-border">
+            {/* Data Stream Visualization */}
+            <LiveDataStream isLive={isLive} activePower={stats.activePower} />
+
+            {/* Realtime Stats Feed */}
+            <RealtimeStats 
+              isLive={isLive} 
+              stats={{
+                activePower: stats.activePower,
+                tokenBalance: stats.tokenBalance,
+                efficiency: stats.efficiency,
+              }} 
+            />
+
+            {/* Monthly summary */}
+            <div className="glass-card p-4 rounded-xl">
               <div className="text-center">
-                <p className="text-sm text-muted-foreground mb-2">This Month</p>
-                <p className="font-display text-3xl font-bold text-foreground">
+                <p className="text-xs text-muted-foreground mb-1">This Month</p>
+                <p className="font-display text-2xl font-bold text-foreground">
                   <AnimatedCounter value={stats.monthlyUnits} duration={2.5} />
                 </p>
-                <p className="text-sm text-primary">Units Generated</p>
+                <p className="text-xs text-primary">Units Generated</p>
               </div>
             </div>
           </motion.div>
