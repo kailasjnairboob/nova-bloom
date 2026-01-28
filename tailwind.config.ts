@@ -14,8 +14,12 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        sans: ['Space Grotesk', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
         display: ['Orbitron', 'sans-serif'],
+        heading: ['Exo 2', 'sans-serif'],
+        subheading: ['Rajdhani', 'sans-serif'],
+        nav: ['Titillium Web', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",
