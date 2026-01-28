@@ -2,11 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* EnerChain Design System - Clean Light Theme with Green Energy Accent */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+/* EnerChain Design System - Futuristic Multi-Font System with Theme Support */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&family=Rajdhani:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Titillium+Web:wght@300;400;600;700&display=swap');
 
 @layer base {
-  :root {
+  /* Light Theme (default) */
+  :root,
+  .light {
     /* Core backgrounds - Layered depth system */
     --background: 160 15% 97%;
     --foreground: 220 25% 12%;
@@ -68,16 +70,88 @@
     --sidebar-border: 160 15% 88%;
     --sidebar-ring: 160 84% 39%;
   }
+
+  /* Dark Theme */
+  .dark {
+    /* Core backgrounds - Deep space feel */
+    --background: 220 20% 8%;
+    --foreground: 160 10% 95%;
+
+    /* Surface levels for depth */
+    --surface-1: 220 18% 10%;
+    --surface-2: 220 16% 12%;
+    --surface-3: 220 14% 15%;
+
+    /* Cards - Glass with depth */
+    --card: 220 18% 12%;
+    --card-foreground: 160 10% 95%;
+
+    /* Popover */
+    --popover: 220 18% 10%;
+    --popover-foreground: 160 10% 95%;
+
+    /* Primary - Neon Green Energy */
+    --primary: 160 90% 45%;
+    --primary-foreground: 220 20% 8%;
+
+    /* Secondary */
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 160 60% 70%;
+
+    /* Muted - Dark tinted */
+    --muted: 220 15% 16%;
+    --muted-foreground: 220 10% 55%;
+
+    /* Accent - Electric Orange */
+    --accent: 25 100% 55%;
+    --accent-foreground: 220 20% 8%;
+
+    /* Destructive */
+    --destructive: 0 80% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders */
+    --border: 220 15% 20%;
+    --input: 220 15% 18%;
+    --ring: 160 90% 45%;
+
+    /* Custom tokens for dark mode */
+    --glow-primary: 160 90% 50%;
+    --glow-accent: 25 100% 60%;
+    --gradient-start: 160 90% 50%;
+    --gradient-end: 200 85% 55%;
+    --surface-glass: 220 18% 12%;
+    
+    /* Sidebar */
+    --sidebar-background: 220 18% 10%;
+    --sidebar-foreground: 160 10% 95%;
+    --sidebar-primary: 160 90% 45%;
+    --sidebar-primary-foreground: 220 20% 8%;
+    --sidebar-accent: 220 15% 18%;
+    --sidebar-accent-foreground: 160 60% 70%;
+    --sidebar-border: 220 15% 20%;
+    --sidebar-ring: 160 90% 45%;
+  }
 }
 
 @layer base {
   * {
     @apply border-border;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
+  }
+
+  html {
+    transition: none;
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* Light mode background */
+  .light body,
+  :root body {
     background: 
       radial-gradient(ellipse 80% 50% at 50% -20%, hsl(160 40% 95%) 0%, transparent 50%),
       radial-gradient(ellipse 60% 40% at 100% 50%, hsl(160 30% 94%) 0%, transparent 40%),
@@ -85,8 +159,50 @@
       hsl(var(--background));
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  /* Dark mode background */
+  .dark body {
+    background: 
+      radial-gradient(ellipse 80% 50% at 50% -20%, hsl(160 50% 15% / 0.4) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 40% at 100% 50%, hsl(250 40% 15% / 0.3) 0%, transparent 40%),
+      radial-gradient(ellipse 50% 30% at 0% 80%, hsl(25 60% 15% / 0.2) 0%, transparent 40%),
+      hsl(var(--background));
+  }
+
+  /* FUTURISTIC FONT SYSTEM */
+  
+  /* Display headings - Orbitron (Hero sections, main titles) */
+  .font-display, h1 {
     font-family: 'Orbitron', sans-serif;
+    letter-spacing: 0.02em;
+  }
+
+  /* Section headings - Exo 2 (Section titles, card headers) */
+  h2, h3 {
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 600;
+  }
+
+  /* Sub-headings - Rajdhani (Stats, labels, badges) */
+  h4, h5, h6 {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+
+  /* Body text - Space Grotesk (Primary body, descriptions) */
+  p, span, div {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  /* Navigation - Titillium Web (Nav items, buttons) */
+  nav, button, a {
+    font-family: 'Titillium Web', sans-serif;
+  }
+
+  /* Data/Numbers - JetBrains Mono (Stats, counters, technical data) */
+  .font-mono, code, .stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-feature-settings: 'tnum' on, 'lnum' on;
   }
 }
 

@@ -4,6 +4,7 @@ import { Zap, Activity, Store, Trophy, Leaf, CreditCard, Wallet, Menu, X, User }
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
 import { useWallet, useEnergy } from "@/contexts";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const navItems = [
   { name: "Activity", icon: Activity, href: "/dashboard" },
@@ -80,8 +81,11 @@ export const Navbar = () => {
             ))}
           </div>
 
-          {/* Right Section - Wallet & Avatar */}
-          <div className="flex items-center gap-4">
+          {/* Right Section - Theme Toggle, Wallet & Avatar */}
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
             {/* Wallet Status */}
             <motion.div
               className="hidden md:flex items-center gap-3 px-4 py-2 bg-muted rounded-full border border-border"
@@ -95,8 +99,8 @@ export const Navbar = () => {
                 />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
               </span>
-              <span className="text-sm font-medium text-foreground">
-                {Math.floor(stats.tokenBalance).toLocaleString()} tokens
+              <span className="text-sm font-mono font-medium text-foreground">
+                {Math.floor(stats.tokenBalance).toLocaleString()}
               </span>
               <Wallet className="w-4 h-4 text-primary" />
             </motion.div>

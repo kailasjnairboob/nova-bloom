@@ -2,11 +2,13 @@ import React, { ReactNode } from 'react';
 import { AuthProvider } from './AuthContext';
 import { WalletProvider } from './WalletContext';
 import { EnergyProvider } from './EnergyContext';
+import { ThemeProvider } from './ThemeContext';
 
 // Re-export all hooks for easy importing
 export { useAuth } from './AuthContext';
 export { useWallet } from './WalletContext';
 export { useEnergy } from './EnergyContext';
+export { useTheme } from './ThemeContext';
 
 // Re-export types
 export type { User } from './AuthContext';
@@ -20,6 +22,7 @@ export type { Installation, GenerationDataPoint, EnergyStats } from './EnergyCon
  * When integrating with a backend, each provider can be updated independently.
  * 
  * Integration points:
+ * - ThemeProvider: Manages light/dark mode with persistence
  * - AuthProvider: Connect to authentication API (JWT, OAuth, etc.)
  * - WalletProvider: Connect to Solana Wallet Adapter
  * - EnergyProvider: Connect to energy data API and smart contracts
@@ -30,13 +33,15 @@ interface AppProviderProps {
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   return (
-    <AuthProvider>
-      <WalletProvider>
-        <EnergyProvider>
-          {children}
-        </EnergyProvider>
-      </WalletProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <WalletProvider>
+          <EnergyProvider>
+            {children}
+          </EnergyProvider>
+        </WalletProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 };
 
