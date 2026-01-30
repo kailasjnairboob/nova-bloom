@@ -1,24 +1,25 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Zap, Activity, Store, Trophy, Leaf, CreditCard, Wallet, Menu, X, User } from "lucide-react";
+import { Zap, Activity, Store, Trophy, Leaf, CreditCard, Menu, X, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
-import { useWallet, useEnergy } from "@/contexts";
+import { useWallet, useEnergy, useAuth } from "@/contexts";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const navItems = [
-  { name: "Activity", icon: Activity, href: "/dashboard" },
-  { name: "Marketplace", icon: Store, href: "/marketplace" },
-  { name: "Achievements", icon: Trophy, href: "/gamification" },
-  { name: "Carbon Impact", icon: Leaf, href: "/carbon-impact" },
-  { name: "Bill Payment", icon: CreditCard, href: "/billing" },
+  { name: "ACTIVITY", icon: Activity, href: "/dashboard" },
+  { name: "MARKETPLACE", icon: Store, href: "/marketplace" },
+  { name: "ACHIEVEMENTS", icon: Trophy, href: "/gamification" },
+  { name: "CARBON IMPACT", icon: Leaf, href: "/carbon-impact" },
+  { name: "PAYMENTS", icon: CreditCard, href: "/billing" },
 ];
 
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { isConnected, shortAddress } = useWallet();
+  const { } = useWallet();
   const { stats } = useEnergy();
+  const { user } = useAuth();
 
   const isActive = (href: string) => location.pathname === href;
 
@@ -26,7 +27,7 @@ export const Navbar = () => {
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-sm"
+      className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border"
     >
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
@@ -37,15 +38,15 @@ export const Navbar = () => {
               whileHover={{ scale: 1.02 }}
             >
               <div className="relative">
-                <Zap className="w-8 h-8 text-primary" />
+                <Zap className="w-7 h-7 text-primary" />
                 <motion.div 
-                  className="absolute inset-0 bg-primary/20 rounded-full -z-10"
-                  animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.2, 0.5] }}
+                  className="absolute inset-0 bg-primary/30 rounded-full blur-lg -z-10"
+                  animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0.2, 0.5] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 />
               </div>
-              <span className="font-display font-bold text-xl lg:text-2xl text-foreground">
-                Ener<span className="text-primary">Chain</span>
+              <span className="font-heading text-xl lg:text-2xl tracking-wider text-foreground">
+                ENERCHAIN
               </span>
             </motion.div>
           </Link>
@@ -61,34 +62,27 @@ export const Navbar = () => {
                   className={cn(
                     "flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 relative",
                     isActive(item.href)
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      ? "bg-primary/15 text-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   )}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <item.icon className="w-4 h-4" />
-                  <span className="text-sm font-medium">{item.name}</span>
-                  {isActive(item.href) && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary rounded-full"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                    />
-                  )}
+                  <span className="text-sm font-nav font-semibold tracking-wide">{item.name}</span>
                 </motion.div>
               </Link>
             ))}
           </div>
 
-          {/* Right Section - Theme Toggle, Wallet & Avatar */}
+          {/* Right Section */}
           <div className="flex items-center gap-3">
             {/* Theme Toggle */}
             <ThemeToggle />
 
-            {/* Wallet Status */}
+            {/* Token Balance */}
             <motion.div
-              className="hidden md:flex items-center gap-3 px-4 py-2 bg-muted rounded-full border border-border"
+              className="hidden md:flex items-center gap-2 px-4 py-2 bg-primary/20 rounded-full border border-primary/30"
               whileHover={{ scale: 1.02 }}
             >
               <span className="relative flex h-2 w-2">
@@ -99,21 +93,27 @@ export const Navbar = () => {
                 />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
               </span>
-              <span className="text-sm font-mono font-medium text-foreground">
+              <span className="text-sm font-mono font-bold text-primary">
                 {Math.floor(stats.tokenBalance).toLocaleString()}
               </span>
-              <Wallet className="w-4 h-4 text-primary" />
+              <span className="text-xs text-muted-foreground">tokens</span>
             </motion.div>
 
-            {/* User Avatar */}
+            {/* User Avatar with Level */}
             <Link to="/profile">
-              <motion.button
-                className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-display font-bold text-lg shadow-md"
-                whileHover={{ scale: 1.05, boxShadow: "0 4px 20px hsl(160 84% 39% / 0.4)" }}
-                whileTap={{ scale: 0.95 }}
+              <motion.div
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                K
-              </motion.button>
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent to-accent/70 flex items-center justify-center text-accent-foreground font-bold text-sm">
+                  {user?.name?.charAt(0).toUpperCase() || 'U'}
+                </div>
+                <div className="hidden sm:block text-left">
+                  <p className="text-xs font-medium text-foreground leading-none">{user?.name || 'User'}</p>
+                  <p className="text-xs text-muted-foreground">Level {user?.level || 1}</p>
+                </div>
+              </motion.div>
             </Link>
 
             {/* Mobile Menu Toggle */}
@@ -168,12 +168,12 @@ export const Navbar = () => {
                     className={cn(
                       "flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
                       isActive(item.href)
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                        ? "bg-primary/15 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                     )}
                   >
                     <item.icon className="w-5 h-5" />
-                    <span className="font-medium">{item.name}</span>
+                    <span className="font-nav font-semibold tracking-wide">{item.name}</span>
                   </Link>
                 </motion.div>
               ))}
@@ -185,10 +185,10 @@ export const Navbar = () => {
                 <Link
                   to="/profile"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-muted-foreground hover:text-foreground hover:bg-muted"
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-muted-foreground hover:text-foreground hover:bg-muted/50"
                 >
                   <User className="w-5 h-5" />
-                  <span className="font-medium">Profile</span>
+                  <span className="font-nav font-semibold tracking-wide">PROFILE</span>
                 </Link>
               </motion.div>
             </motion.div>
