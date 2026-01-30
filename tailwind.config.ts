@@ -15,11 +15,12 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Space Grotesk', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-        display: ['Orbitron', 'sans-serif'],
-        heading: ['Exo 2', 'sans-serif'],
+        display: ['Anton', 'Bebas Neue', 'sans-serif'],
+        heading: ['Bebas Neue', 'Anton', 'sans-serif'],
         subheading: ['Rajdhani', 'sans-serif'],
         nav: ['Titillium Web', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
+        body: ['Exo 2', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

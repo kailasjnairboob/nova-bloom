@@ -1,103 +1,109 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Sun, Wind, Zap, MapPin, Star, ArrowRight, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useEnergy, useWallet } from "@/contexts";
-import { toast } from "sonner";
+import { LocationCard, Location } from "@/components/marketplace/LocationCard";
+import { InstallationModal } from "@/components/marketplace/InstallationModal";
 
-const locations = [
+// Location images - using placeholder images for demo
+const locations: Location[] = [
   {
     id: 1,
     name: "Rajasthan Solar Park",
     location: "Jodhpur, Rajasthan",
     type: "Solar",
-    icon: Sun,
-    capacity: "500 kW",
-    sunnyDays: 300,
-    generation: "1,500 Units/kW",
+    image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&h=400&fit=crop",
+    capacity: "500",
+    capacityKw: 500,
+    annualGeneration: "1500",
+    maxUserCapacity: "25",
     score: 4.9,
-    gradient: "from-orange-500 to-yellow-500",
-    benefits: ["Highest solar irradiance", "Minimal cloud cover", "Desert optimal conditions"],
+    description: "Desert solar installation with optimal sun exposure",
   },
   {
     id: 2,
     name: "Tamil Nadu Wind Farm",
     location: "Tirunelveli, Tamil Nadu",
     type: "Wind",
-    icon: Wind,
-    capacity: "750 kW",
-    windSpeed: "8-15 m/s",
-    generation: "2,200 Units/kW",
+    image: "https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=600&h=400&fit=crop",
+    capacity: "750",
+    capacityKw: 750,
+    annualGeneration: "2200",
+    maxUserCapacity: "15",
     score: 4.8,
-    gradient: "from-cyan-500 to-blue-500",
-    benefits: ["Coastal monsoon winds", "Consistent generation", "High efficiency"],
+    description: "Coastal wind farm with consistent wind patterns",
   },
   {
     id: 3,
     name: "Gujarat Hybrid Station",
     location: "Kutch, Gujarat",
     type: "Hybrid",
-    icon: Zap,
-    capacity: "600 kW",
-    generation: "2,000 Units/kW",
+    image: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=600&h=400&fit=crop",
+    capacity: "600",
+    capacityKw: 600,
+    annualGeneration: "2000",
+    maxUserCapacity: "20",
     score: 4.9,
-    gradient: "from-primary to-accent",
-    benefits: ["24/7 generation", "Solar + Wind combined", "Minimal downtime"],
+    description: "Combined solar and wind for 24/7 generation",
   },
   {
     id: 4,
     name: "Karnataka Solar Array",
     location: "Pavagada, Karnataka",
     type: "Solar",
-    icon: Sun,
-    capacity: "550 kW",
-    sunnyDays: 290,
-    generation: "1,450 Units/kW",
+    image: "https://images.unsplash.com/photo-1559302504-64aae6ca6b6d?w=600&h=400&fit=crop",
+    capacity: "550",
+    capacityKw: 550,
+    annualGeneration: "1450",
+    maxUserCapacity: "25",
     score: 4.8,
-    gradient: "from-yellow-400 to-orange-400",
-    benefits: ["High elevation", "Low dust levels", "Excellent irradiance"],
+    description: "High altitude solar park with excellent irradiance",
+  },
+  {
+    id: 5,
+    name: "Andhra Pradesh Wind",
+    location: "Anantapur, Andhra Pradesh",
+    type: "Wind",
+    image: "https://images.unsplash.com/photo-1548337138-e87d889cc369?w=600&h=400&fit=crop",
+    capacity: "400",
+    capacityKw: 400,
+    annualGeneration: "1800",
+    maxUserCapacity: "15",
+    score: 4.7,
+    description: "Plateau wind farm with steady monsoon winds",
+  },
+  {
+    id: 6,
+    name: "Maharashtra Hybrid",
+    location: "Dhule, Maharashtra",
+    type: "Hybrid",
+    image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&h=400&fit=crop",
+    capacity: "450",
+    capacityKw: 450,
+    annualGeneration: "1900",
+    maxUserCapacity: "20",
+    score: 4.8,
+    description: "Integrated solar-wind system with battery storage",
   },
 ];
 
-const comingSoon = [
-  { name: "Sahara Solar Array", location: "Morocco", flag: "🇲🇦" },
-  { name: "Patagonia Wind Park", location: "Argentina", flag: "🇦🇷" },
-  { name: "Outback Hybrid", location: "Australia", flag: "🇦🇺" },
-];
-
 export const MarketplaceSection = () => {
-  const { addInstallation } = useEnergy();
-  const { isConnected } = useWallet();
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handlePlanInstallation = async (location: typeof locations[0]) => {
-    if (!isConnected) {
-      toast.error("Please connect your wallet first");
-      return;
-    }
+  const handlePlanInstallation = (location: Location) => {
+    setSelectedLocation(location);
+    setIsModalOpen(true);
+  };
 
-    // BACKEND INTEGRATION POINT
-    // This is where you would call the API to initiate an installation
-    // Example: await installationApi.planInstallation(location.id);
-    
-    toast.success(`Planning installation at ${location.name}...`);
-    
-    // For demo, we add a mock installation
-    await addInstallation({
-      name: location.name,
-      type: location.type as 'Solar' | 'Wind' | 'Hybrid',
-      location: location.location,
-      capacity: location.capacity,
-      capacityKw: parseFloat(location.capacity),
-      status: 'inactive',
-      efficiency: 0,
-      todayUnits: 0,
-      monthUnits: 0,
-    });
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedLocation(null);
   };
 
   return (
     <section className="py-12 relative overflow-hidden">
+      {/* Background */}
       <div className="absolute inset-0 gradient-dark" />
-      <div className="absolute top-0 right-0 w-1/2 h-1/2 gradient-radial opacity-20" />
+      <div className="absolute inset-0 grid-pattern opacity-50" />
 
       <div className="container relative z-10 px-4 lg:px-8">
         {/* Section Header */}
@@ -105,127 +111,35 @@ export const MarketplaceSection = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-accent/30 mb-6">
-            <Sparkles className="w-4 h-4 text-accent" />
-            <span className="text-sm text-accent font-medium">Premium Locations</span>
-          </div>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Remote Installation <span className="text-primary text-glow">Marketplace</span>
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Choose your optimal location and start generating clean energy with verified installations.
+          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold mb-4 tracking-wider">
+            MARKETPLACE
+          </h1>
+          <p className="text-muted-foreground text-lg max-w-xl">
+            Choose your location and start generating clean energy
           </p>
         </motion.div>
 
         {/* Location Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {locations.map((location, index) => (
-            <motion.div
+            <LocationCard
               key={location.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ y: -5 }}
-              className="group"
-            >
-              <div className="glass-card rounded-2xl overflow-hidden hover:border-primary/40 transition-all duration-500">
-                {/* Gradient Header */}
-                <div className={`h-2 bg-gradient-to-r ${location.gradient}`} />
-                
-                <div className="p-6">
-                  {/* Header */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <motion.div 
-                        className={`p-3 rounded-xl bg-gradient-to-br ${location.gradient} bg-opacity-20`}
-                        whileHover={{ rotate: 10 }}
-                      >
-                        <location.icon className="w-6 h-6 text-foreground" />
-                      </motion.div>
-                      <div>
-                        <h3 className="font-display text-xl font-semibold text-foreground">{location.name}</h3>
-                        <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
-                          <MapPin className="w-3.5 h-3.5" />
-                          {location.location}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-primary/20">
-                      <Star className="w-4 h-4 text-primary fill-primary" />
-                      <span className="font-display font-semibold text-primary">{location.score}</span>
-                    </div>
-                  </div>
-
-                  {/* Stats */}
-                  <div className="grid grid-cols-3 gap-4 mb-5 py-4 border-y border-border/50">
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Type</p>
-                      <p className="font-semibold text-foreground">{location.type}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Available</p>
-                      <p className="font-semibold text-foreground">{location.capacity}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Expected</p>
-                      <p className="font-semibold text-accent">{location.generation}</p>
-                    </div>
-                  </div>
-
-                  {/* Benefits */}
-                  <div className="space-y-2 mb-6">
-                    {location.benefits.map((benefit, i) => (
-                      <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                        {benefit}
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* CTA */}
-                  <Button 
-                    className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-display font-semibold group"
-                    onClick={() => handlePlanInstallation(location)}
-                  >
-                    Plan Your Installation
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
+              location={location}
+              onPlanInstallation={handlePlanInstallation}
+              index={index}
+            />
           ))}
         </div>
-
-        {/* Coming Soon */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
-          <h3 className="font-display text-xl font-semibold text-muted-foreground mb-6">Coming Soon - Global Expansion</h3>
-          <div className="flex flex-wrap justify-center gap-4">
-            {comingSoon.map((loc) => (
-              <motion.div
-                key={loc.name}
-                className="glass-card px-5 py-3 rounded-xl opacity-60 hover:opacity-80 transition-opacity cursor-not-allowed"
-                whileHover={{ scale: 1.02 }}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{loc.flag}</span>
-                  <div className="text-left">
-                    <p className="font-medium text-foreground text-sm">{loc.name}</p>
-                    <p className="text-xs text-muted-foreground">{loc.location}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
       </div>
+
+      {/* Installation Modal */}
+      <InstallationModal
+        location={selectedLocation}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </section>
   );
 };
