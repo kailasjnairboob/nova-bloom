@@ -55,8 +55,8 @@ export const BillingSection = () => {
   };
 
   return (
-    <section className="py-12 relative bg-muted/30">
-      <div className="absolute inset-0 grid-pattern opacity-50" />
+    <section className="py-12 relative bg-background">
+      <div className="absolute inset-0 grid-pattern opacity-20" />
       
       <div className="container relative z-10 px-4 lg:px-8">
         {/* Section Header */}
@@ -66,10 +66,19 @@ export const BillingSection = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
-            Redeem & <span className="text-accent">Withdrawal</span>
+          <motion.div
+            initial={{ scale: 0 }}
+            whileInView={{ scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 mb-6"
+          >
+            <CreditCard className="w-4 h-4 text-accent" />
+            <span className="text-sm text-accent font-medium uppercase tracking-wide">Token Redemption</span>
+          </motion.div>
+          <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl tracking-wider mb-4">
+            REDEEM & <span className="text-gradient-orange">WITHDRAW</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-body">
             Convert your tokens to real value - pay bills, withdraw to bank, or transfer to friends.
           </p>
         </motion.div>
@@ -90,7 +99,7 @@ export const BillingSection = () => {
             >
               {feature.upcoming && (
                 <div className="absolute top-4 right-4">
-                  <span className="upcoming-badge">
+                  <span className="inline-flex items-center px-2 py-1 rounded-full bg-accent/20 text-accent text-xs font-semibold">
                     <Clock className="w-3 h-3 mr-1" />
                     Upcoming
                   </span>
@@ -107,7 +116,7 @@ export const BillingSection = () => {
               >
                 <feature.icon className={`w-7 h-7 ${feature.available ? 'text-primary' : 'text-muted-foreground'}`} />
               </motion.div>
-              <h3 className="font-display text-xl font-semibold text-foreground mb-2">{feature.title}</h3>
+              <h3 className="font-subheading text-xl font-semibold text-foreground mb-2 uppercase tracking-wide">{feature.title}</h3>
               <p className="text-muted-foreground text-sm">{feature.description}</p>
               
               {!feature.available && (
@@ -136,14 +145,14 @@ export const BillingSection = () => {
               >
                 <CreditCard className="w-5 h-5 text-primary" />
               </motion.div>
-              <h3 className="font-display text-xl font-semibold text-foreground">Pay Electricity Bill</h3>
+              <h3 className="font-subheading text-xl font-semibold text-foreground uppercase tracking-wide">Pay Electricity Bill</h3>
             </div>
 
             <div className="space-y-5">
               <div>
-                <label className="text-sm text-muted-foreground mb-2 block">Select Your State</label>
+                <label className="text-sm text-muted-foreground mb-2 block uppercase tracking-wide text-xs">Select Your State</label>
                 <Select>
-                  <SelectTrigger className="bg-muted border-border">
+                  <SelectTrigger className="bg-muted border-border text-foreground">
                     <SelectValue placeholder="Choose state" />
                   </SelectTrigger>
                   <SelectContent>
@@ -157,9 +166,9 @@ export const BillingSection = () => {
               </div>
 
               <div>
-                <label className="text-sm text-muted-foreground mb-2 block">Electricity Provider</label>
+                <label className="text-sm text-muted-foreground mb-2 block uppercase tracking-wide text-xs">Electricity Provider</label>
                 <Select>
-                  <SelectTrigger className="bg-muted border-border">
+                  <SelectTrigger className="bg-muted border-border text-foreground">
                     <SelectValue placeholder="Choose provider" />
                   </SelectTrigger>
                   <SelectContent>
@@ -170,43 +179,43 @@ export const BillingSection = () => {
               </div>
 
               <div>
-                <label className="text-sm text-muted-foreground mb-2 block">Consumer Account Number</label>
+                <label className="text-sm text-muted-foreground mb-2 block uppercase tracking-wide text-xs">Consumer Account Number</label>
                 <Input 
                   placeholder="e.g., KL-1234-567890" 
-                  className="bg-muted border-border"
+                  className="bg-muted border-border text-foreground placeholder:text-muted-foreground"
                 />
               </div>
 
               <div>
-                <label className="text-sm text-muted-foreground mb-2 block">Tokens to Redeem</label>
+                <label className="text-sm text-muted-foreground mb-2 block uppercase tracking-wide text-xs">Tokens to Redeem</label>
                 <Input 
                   type="number"
                   value={tokenAmount}
                   onChange={(e) => setTokenAmount(e.target.value)}
                   placeholder="Enter amount" 
-                  className="bg-muted border-border"
+                  className="bg-muted border-border text-foreground font-mono placeholder:text-muted-foreground"
                 />
                 <p className="text-xs text-muted-foreground mt-2">
-                  Available: <span className="text-primary font-semibold">{stats.tokenBalance.toLocaleString()} tokens</span>
+                  Available: <span className="text-primary font-semibold font-mono">{stats.tokenBalance.toLocaleString()} tokens</span>
                 </p>
               </div>
 
               <motion.div 
-                className="p-4 rounded-xl bg-primary/5 border border-primary/20"
-                animate={{ borderColor: ['hsl(160 84% 39% / 0.2)', 'hsl(160 84% 39% / 0.4)', 'hsl(160 84% 39% / 0.2)'] }}
+                className="p-4 rounded-xl bg-primary/10 border border-primary/30"
+                animate={{ borderColor: ['hsl(var(--primary) / 0.3)', 'hsl(var(--primary) / 0.5)', 'hsl(var(--primary) / 0.3)'] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Estimated Amount</span>
-                  <span className="font-display text-xl font-bold text-primary">₹{estimatedAmount.toLocaleString()}</span>
+                  <span className="text-sm text-muted-foreground uppercase tracking-wide">Estimated Amount</span>
+                  <span className="font-mono text-xl font-bold text-primary">₹{estimatedAmount.toLocaleString()}</span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">{tokenAmount || 0} tokens × ₹3.80</p>
+                <p className="text-xs text-muted-foreground mt-1 font-mono">{tokenAmount || 0} tokens × ₹3.80</p>
               </motion.div>
 
               <Button 
                 onClick={handleRedeem}
                 disabled={isRedeeming}
-                className="w-full bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display font-semibold py-6 shadow-lg hover:shadow-xl transition-shadow"
+                className="w-full btn-orange rounded-lg py-6 shadow-lg hover:shadow-xl transition-shadow"
               >
                 {isRedeeming ? (
                   <motion.div 
@@ -230,17 +239,17 @@ export const BillingSection = () => {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="glass-card p-6 md:p-8 rounded-2xl border-accent/20"
+            className="glass-card p-6 md:p-8 rounded-2xl neon-border-accent"
           >
             <div className="text-center mb-8">
               <motion.div 
-                className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center"
+                className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center"
                 animate={{ scale: [1, 1.1, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
                 <CheckCircle2 className="w-8 h-8 text-primary" />
               </motion.div>
-              <h3 className="font-display text-2xl font-bold text-foreground mb-2">Redemption Preview</h3>
+              <h3 className="font-subheading text-2xl font-bold text-foreground mb-2 uppercase tracking-wide">Redemption Preview</h3>
               <p className="text-muted-foreground">Your discount code will appear here</p>
             </div>
 
@@ -250,9 +259,9 @@ export const BillingSection = () => {
               animate={redeemCode ? { opacity: 1, scale: [1, 1.02, 1] } : { opacity: 0.7 }}
             >
               <div className="text-center mb-4">
-                <p className="text-sm text-muted-foreground mb-2">Discount Code</p>
+                <p className="text-sm text-muted-foreground mb-2 uppercase tracking-wide">Discount Code</p>
                 <motion.div 
-                  className="font-display text-2xl font-bold text-accent tracking-wider"
+                  className="font-mono text-2xl font-bold text-accent tracking-wider"
                   animate={redeemCode ? { scale: [1, 1.05, 1] } : {}}
                   transition={{ duration: 0.5 }}
                 >
@@ -263,7 +272,7 @@ export const BillingSection = () => {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Amount</span>
-                  <span className="text-foreground font-medium">₹{estimatedAmount.toLocaleString()}</span>
+                  <span className="text-foreground font-medium font-mono">₹{estimatedAmount.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Provider</span>
@@ -271,23 +280,23 @@ export const BillingSection = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Valid Until</span>
-                  <span className="text-foreground font-medium">30-Nov-2025</span>
+                  <span className="text-foreground font-medium font-mono">30-Nov-2025</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Consumer</span>
-                  <span className="text-foreground font-medium">KL-1234-567890</span>
+                  <span className="text-foreground font-medium font-mono">KL-1234-567890</span>
                 </div>
               </div>
             </motion.div>
 
             <div className="grid grid-cols-3 gap-3">
-              <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/5">
+              <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/10 hover:text-primary">
                 Copy
               </Button>
-              <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/5">
+              <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/10 hover:text-primary">
                 Share
               </Button>
-              <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/5">
+              <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/10 hover:text-primary">
                 Download
               </Button>
             </div>
@@ -295,8 +304,8 @@ export const BillingSection = () => {
             {/* Bank Withdrawal Section */}
             <div className="mt-6 pt-6 border-t border-border">
               <div className="flex items-center justify-between mb-4">
-                <h4 className="font-display text-lg font-semibold text-foreground">Bank Withdrawal</h4>
-                <span className="upcoming-badge">
+                <h4 className="font-subheading text-lg font-semibold text-foreground uppercase tracking-wide">Bank Withdrawal</h4>
+                <span className="inline-flex items-center px-2 py-1 rounded-full bg-accent/20 text-accent text-xs font-semibold">
                   <Clock className="w-3 h-3 mr-1" />
                   Upcoming
                 </span>
