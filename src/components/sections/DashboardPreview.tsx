@@ -62,32 +62,53 @@ export const DashboardPreview = () => {
       case 'line':
         return (
           <LineChart {...commonProps}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(220 13% 91%)" />
-            <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fill: 'hsl(220 10% 46%)', fontSize: 12 }} />
-            <YAxis axisLine={false} tickLine={false} tick={{ fill: 'hsl(220 10% 46%)', fontSize: 12 }} />
-            <Tooltip contentStyle={{ backgroundColor: 'hsl(0 0% 100%)', border: '1px solid hsl(220 13% 91%)', borderRadius: '8px' }} />
-            <Line type="monotone" dataKey="units" stroke="hsl(160 84% 39%)" strokeWidth={3} dot={{ fill: 'hsl(160 84% 39%)', strokeWidth: 2, r: 4 }} activeDot={{ r: 6, fill: 'hsl(25 95% 53%)' }} />
+            <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+            <XAxis dataKey="time" axisLine={false} tickLine={false} className="fill-muted-foreground text-xs" />
+            <YAxis axisLine={false} tickLine={false} className="fill-muted-foreground text-xs" />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: 'hsl(var(--card))', 
+                border: '1px solid hsl(var(--border))', 
+                borderRadius: '8px',
+                color: 'hsl(var(--foreground))'
+              }} 
+            />
+            <Line type="monotone" dataKey="units" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2, r: 4 }} activeDot={{ r: 6, fill: 'hsl(var(--accent))' }} />
           </LineChart>
         );
       case 'bar':
         return (
           <BarChart {...commonProps}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(220 13% 91%)" />
-            <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fill: 'hsl(220 10% 46%)', fontSize: 12 }} />
-            <YAxis axisLine={false} tickLine={false} tick={{ fill: 'hsl(220 10% 46%)', fontSize: 12 }} />
-            <Tooltip contentStyle={{ backgroundColor: 'hsl(0 0% 100%)', border: '1px solid hsl(220 13% 91%)', borderRadius: '8px' }} />
-            <Bar dataKey="units" fill="hsl(160 84% 39%)" radius={[4, 4, 0, 0]} />
+            <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+            <XAxis dataKey="time" axisLine={false} tickLine={false} className="fill-muted-foreground text-xs" />
+            <YAxis axisLine={false} tickLine={false} className="fill-muted-foreground text-xs" />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: 'hsl(var(--card))', 
+                border: '1px solid hsl(var(--border))', 
+                borderRadius: '8px',
+                color: 'hsl(var(--foreground))'
+              }} 
+            />
+            <Bar dataKey="units" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
           </BarChart>
         );
       case 'composed':
         return (
           <ComposedChart {...commonProps}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(220 13% 91%)" />
-            <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fill: 'hsl(220 10% 46%)', fontSize: 12 }} />
-            <YAxis axisLine={false} tickLine={false} tick={{ fill: 'hsl(220 10% 46%)', fontSize: 12 }} />
-            <Tooltip contentStyle={{ backgroundColor: 'hsl(0 0% 100%)', border: '1px solid hsl(220 13% 91%)', borderRadius: '8px' }} />
-            <Bar dataKey="units" fill="hsl(160 84% 39% / 0.3)" radius={[4, 4, 0, 0]} />
-            <Line type="monotone" dataKey="units" stroke="hsl(25 95% 53%)" strokeWidth={2} dot={false} />
+            <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+            <XAxis dataKey="time" axisLine={false} tickLine={false} className="fill-muted-foreground text-xs" />
+            <YAxis axisLine={false} tickLine={false} className="fill-muted-foreground text-xs" />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: 'hsl(var(--card))', 
+                border: '1px solid hsl(var(--border))', 
+                borderRadius: '8px',
+                color: 'hsl(var(--foreground))'
+              }} 
+            />
+            <Bar dataKey="units" fill="hsl(var(--primary) / 0.3)" radius={[4, 4, 0, 0]} />
+            <Line type="monotone" dataKey="units" stroke="hsl(var(--accent))" strokeWidth={2} dot={false} />
           </ComposedChart>
         );
       default:
@@ -95,23 +116,31 @@ export const DashboardPreview = () => {
           <AreaChart {...commonProps}>
             <defs>
               <linearGradient id="colorUnits" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(160 84% 39%)" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="hsl(160 84% 39%)" stopOpacity={0}/>
+                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(220 13% 91%)" />
-            <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fill: 'hsl(220 10% 46%)', fontSize: 12 }} />
-            <YAxis axisLine={false} tickLine={false} tick={{ fill: 'hsl(220 10% 46%)', fontSize: 12 }} />
-            <Tooltip contentStyle={{ backgroundColor: 'hsl(0 0% 100%)', border: '1px solid hsl(220 13% 91%)', borderRadius: '8px' }} />
-            <Area type="monotone" dataKey="units" stroke="hsl(160 84% 39%)" strokeWidth={2} fillOpacity={1} fill="url(#colorUnits)" />
+            <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+            <XAxis dataKey="time" axisLine={false} tickLine={false} className="fill-muted-foreground text-xs" />
+            <YAxis axisLine={false} tickLine={false} className="fill-muted-foreground text-xs" />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: 'hsl(var(--card))', 
+                border: '1px solid hsl(var(--border))', 
+                borderRadius: '8px',
+                color: 'hsl(var(--foreground))'
+              }} 
+            />
+            <Area type="monotone" dataKey="units" stroke="hsl(var(--primary))" strokeWidth={2} fillOpacity={1} fill="url(#colorUnits)" />
           </AreaChart>
         );
     }
   };
 
   return (
-    <section className="py-12 relative bg-gradient-to-b from-background to-muted/30">
-      <div className="absolute inset-0 gradient-radial opacity-50" />
+    <section className="py-12 relative bg-background">
+      <div className="absolute inset-0 gradient-radial opacity-30" />
+      <div className="absolute inset-0 grid-pattern opacity-20" />
       
       <div className="container relative z-10 px-4 lg:px-8">
         {/* Section Header */}
@@ -121,10 +150,19 @@ export const DashboardPreview = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
-            Real-Time <span className="text-primary">Energy Dashboard</span>
+          <motion.div
+            initial={{ scale: 0 }}
+            whileInView={{ scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6"
+          >
+            <Activity className="w-4 h-4 text-primary" />
+            <span className="text-sm text-primary font-medium uppercase tracking-wide">Real-Time Monitoring</span>
+          </motion.div>
+          <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl tracking-wider mb-4">
+            ENERGY <span className="text-gradient-teal">DASHBOARD</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-body">
             Monitor your installations, track token generation, and manage your clean energy portfolio.
           </p>
         </motion.div>
@@ -152,13 +190,13 @@ export const DashboardPreview = () => {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                   whileHover={{ scale: 1.02, y: -2 }}
-                  className={`glass-card p-4 rounded-xl`}
+                  className="glass-card p-4 rounded-xl"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <stat.icon className={`w-4 h-4 ${stat.color === 'accent' ? 'text-accent' : 'text-primary'}`} />
-                    <span className="text-xs text-muted-foreground">{stat.label}</span>
+                    <span className="text-xs text-muted-foreground font-subheading uppercase tracking-wide">{stat.label}</span>
                   </div>
-                  <div className="font-display text-xl md:text-2xl font-bold text-foreground">
+                  <div className="font-mono text-xl md:text-2xl font-bold text-foreground">
                     <AnimatedCounter value={typeof stat.value === 'number' ? stat.value : 0} />
                     {stat.suffix}
                   </div>
@@ -175,7 +213,7 @@ export const DashboardPreview = () => {
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
-                  <h3 className="font-display text-lg font-semibold text-foreground">Energy Generation</h3>
+                  <h3 className="font-subheading text-xl font-semibold text-foreground uppercase tracking-wide">Energy Generation</h3>
                   <p className="text-sm text-muted-foreground">Last 24 hours</p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -256,12 +294,12 @@ export const DashboardPreview = () => {
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-xs text-muted-foreground mb-1">Today's Units</p>
-                      <p className="font-display text-lg font-bold text-foreground">{installation.todayUnits} U</p>
+                      <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">Today's Units</p>
+                      <p className="font-mono text-lg font-bold text-foreground">{installation.todayUnits} U</p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground mb-1">Efficiency</p>
-                      <p className="font-display text-lg font-bold text-primary">{installation.efficiency}%</p>
+                      <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">Efficiency</p>
+                      <p className="font-mono text-lg font-bold text-primary">{installation.efficiency}%</p>
                     </div>
                   </div>
                 </motion.div>
@@ -277,7 +315,7 @@ export const DashboardPreview = () => {
             className="space-y-4 h-fit sticky top-24"
           >
             {/* Connection Status Header */}
-            <div className="glass-card p-4 rounded-xl">
+            <div className="glass-card p-4 rounded-xl neon-border">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <motion.div
@@ -286,14 +324,14 @@ export const DashboardPreview = () => {
                   >
                     <Wifi className={`w-4 h-4 ${isLive ? 'text-primary' : 'text-muted-foreground'}`} />
                   </motion.div>
-                  <span className="text-sm font-medium text-foreground">WebSocket</span>
+                  <span className="text-sm font-medium text-foreground uppercase tracking-wide">WebSocket</span>
                 </div>
                 <button
                   onClick={() => setIsLive(!isLive)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all ${
                     isLive 
-                      ? 'bg-primary/10 text-primary border border-primary/20' 
-                      : 'bg-muted text-muted-foreground border border-transparent'
+                      ? 'bg-primary/20 text-primary border border-primary/40' 
+                      : 'bg-muted text-muted-foreground border border-border'
                   }`}
                 >
                   <motion.span 
@@ -315,11 +353,11 @@ export const DashboardPreview = () => {
                 </div>
                 <div className="p-2 rounded-lg bg-muted/50">
                   <p className="text-xs text-muted-foreground">Ping</p>
-                  <p className="text-xs font-semibold text-foreground">{isLive ? '24ms' : '--'}</p>
+                  <p className="text-xs font-mono font-semibold text-foreground">{isLive ? '24ms' : '--'}</p>
                 </div>
                 <div className="p-2 rounded-lg bg-muted/50">
                   <p className="text-xs text-muted-foreground">Uptime</p>
-                  <p className="text-xs font-semibold text-foreground">{isLive ? '99.9%' : '--'}</p>
+                  <p className="text-xs font-mono font-semibold text-foreground">{isLive ? '99.9%' : '--'}</p>
                 </div>
               </div>
             </div>
@@ -327,14 +365,14 @@ export const DashboardPreview = () => {
             {/* Live Power Display */}
             <div className="glass-card p-5 rounded-xl">
               <div className="text-center mb-4">
-                <p className="text-xs text-muted-foreground mb-1">Active Power</p>
+                <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">Active Power</p>
                 <motion.div
-                  className="font-display text-4xl font-bold text-primary"
+                  className="font-mono text-4xl font-bold text-primary"
                   animate={isLive ? { 
                     textShadow: [
-                      '0 0 10px hsl(160 84% 39% / 0.3)',
-                      '0 0 20px hsl(160 84% 39% / 0.5)',
-                      '0 0 10px hsl(160 84% 39% / 0.3)',
+                      '0 0 10px hsl(var(--primary) / 0.3)',
+                      '0 0 20px hsl(var(--primary) / 0.5)',
+                      '0 0 10px hsl(var(--primary) / 0.3)',
                     ]
                   } : {}}
                   transition={{ duration: 1.5, repeat: Infinity }}
@@ -369,44 +407,33 @@ export const DashboardPreview = () => {
                   whileHover={{ scale: 1.02 }}
                 >
                   <p className="text-xs text-muted-foreground">Token Rate</p>
-                  <p className="font-display font-semibold text-accent">+1.2/min</p>
+                  <p className="font-mono font-semibold text-accent">+1.2/min</p>
                 </motion.div>
                 <motion.div 
                   className="p-3 rounded-lg bg-muted/50"
                   whileHover={{ scale: 1.02 }}
                 >
                   <p className="text-xs text-muted-foreground">Peak Today</p>
-                  <p className="font-display font-semibold text-foreground">{stats.peakToday.value}W</p>
+                  <p className="font-mono font-semibold text-foreground">{stats.peakToday.value}W</p>
                 </motion.div>
               </div>
             </div>
 
+            {/* Live Data Stream */}
+            <LiveDataStream isLive={isLive} activePower={stats.activePower} />
+
             {/* Power Waveform */}
             <PowerWaveform isLive={isLive} power={stats.activePower} />
 
-            {/* Data Stream Visualization */}
-            <LiveDataStream isLive={isLive} activePower={stats.activePower} />
-
-            {/* Realtime Stats Feed */}
+            {/* Realtime Stats */}
             <RealtimeStats 
               isLive={isLive} 
               stats={{
                 activePower: stats.activePower,
                 tokenBalance: stats.tokenBalance,
-                efficiency: stats.efficiency,
-              }} 
+                efficiency: stats.efficiency
+              }}
             />
-
-            {/* Monthly summary */}
-            <div className="glass-card p-4 rounded-xl">
-              <div className="text-center">
-                <p className="text-xs text-muted-foreground mb-1">This Month</p>
-                <p className="font-display text-2xl font-bold text-foreground">
-                  <AnimatedCounter value={stats.monthlyUnits} duration={2.5} />
-                </p>
-                <p className="text-xs text-primary">Units Generated</p>
-              </div>
-            </div>
           </motion.div>
         </div>
       </div>

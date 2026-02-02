@@ -30,8 +30,8 @@ export const GamificationSection = () => {
   const { user } = useAuth();
 
   return (
-    <section className="py-12 relative bg-gradient-to-b from-muted/30 to-background">
-      <div className="absolute inset-0 grid-pattern opacity-30" />
+    <section className="py-12 relative bg-background">
+      <div className="absolute inset-0 grid-pattern opacity-20" />
       <div className="absolute bottom-0 left-0 w-1/2 h-1/2 gradient-radial opacity-30" />
 
       <div className="container relative z-10 px-4 lg:px-8">
@@ -49,12 +49,12 @@ export const GamificationSection = () => {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 mb-6"
           >
             <Sparkles className="w-4 h-4 text-accent" />
-            <span className="text-sm text-accent font-medium">Level Up Your Impact</span>
+            <span className="text-sm text-accent font-medium uppercase tracking-wide">Level Up Your Impact</span>
           </motion.div>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
-            Achievements <span className="text-accent">Center</span>
+          <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl tracking-wider mb-4">
+            ACHIEVEMENTS <span className="text-gradient-orange">CENTER</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-body">
             Complete challenges, earn badges, and climb the leaderboard while saving the planet.
           </p>
         </motion.div>
@@ -65,7 +65,7 @@ export const GamificationSection = () => {
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="glass-card p-6 rounded-2xl"
+            className="glass-card p-6 rounded-2xl neon-border"
           >
             <div className="text-center mb-6">
               <motion.div 
@@ -74,14 +74,14 @@ export const GamificationSection = () => {
               >
                 {user?.name?.charAt(0) || 'K'}
               </motion.div>
-              <h3 className="font-display text-2xl font-bold text-foreground">{user?.name || 'Kailas'}</h3>
+              <h3 className="font-subheading text-2xl font-bold text-foreground uppercase tracking-wide">{user?.name || 'Kailas'}</h3>
               <p className="text-accent font-semibold">Level {user?.level || 7} - {user?.levelTitle || 'Eco Warrior'}</p>
             </div>
 
             <div className="mb-6">
               <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-muted-foreground">XP Progress</span>
-                <span className="font-display font-semibold text-foreground">
+                <span className="text-muted-foreground uppercase tracking-wide text-xs">XP Progress</span>
+                <span className="font-mono font-semibold text-foreground">
                   {user?.xp?.toLocaleString() || '2,450'} / {user?.xpRequired?.toLocaleString() || '5,000'}
                 </span>
               </div>
@@ -102,17 +102,17 @@ export const GamificationSection = () => {
                 className="text-center p-3 rounded-xl bg-muted"
                 whileHover={{ scale: 1.05 }}
               >
-                <div className="font-display text-xl font-bold text-primary">34.2</div>
-                <p className="text-xs text-muted-foreground">Tokens Earned</p>
+                <div className="font-mono text-xl font-bold text-primary">34.2</div>
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">Tokens Earned</p>
               </motion.div>
               <motion.div 
                 className="text-center p-3 rounded-xl bg-muted"
                 whileHover={{ scale: 1.05 }}
               >
-                <div className="font-display text-xl font-bold text-accent flex items-center justify-center gap-1">
+                <div className="font-mono text-xl font-bold text-accent flex items-center justify-center gap-1">
                   14 <Flame className="w-4 h-4" />
                 </div>
-                <p className="text-xs text-muted-foreground">Day Streak</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">Day Streak</p>
               </motion.div>
             </div>
           </motion.div>
@@ -132,7 +132,7 @@ export const GamificationSection = () => {
               >
                 <Target className="w-5 h-5 text-accent" />
               </motion.div>
-              <h3 className="font-display text-xl font-semibold text-foreground">Daily Challenges</h3>
+              <h3 className="font-subheading text-xl font-semibold text-foreground uppercase tracking-wide">Daily Challenges</h3>
             </div>
 
             <div className="space-y-4">
@@ -146,7 +146,7 @@ export const GamificationSection = () => {
                   whileHover={{ scale: 1.02, x: 4 }}
                   className={`p-4 rounded-xl border transition-all ${
                     challenge.completed 
-                      ? 'bg-primary/5 border-primary/30' 
+                      ? 'bg-primary/10 border-primary/30' 
                       : 'bg-muted/50 border-border'
                   }`}
                 >
@@ -161,7 +161,7 @@ export const GamificationSection = () => {
                         <Check className="w-5 h-5 text-primary" />
                       </motion.div>
                     ) : challenge.progress ? (
-                      <span className="text-sm text-muted-foreground">{challenge.current}/{challenge.target}</span>
+                      <span className="text-sm text-muted-foreground font-mono">{challenge.current}/{challenge.target}</span>
                     ) : (
                       <Clock className="w-4 h-4 text-muted-foreground" />
                     )}
@@ -169,9 +169,9 @@ export const GamificationSection = () => {
                   {challenge.progress && !challenge.completed && (
                     <Progress value={challenge.progress} className="h-2 mb-2" />
                   )}
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                    <span className="text-primary font-medium">+{challenge.xp} XP</span>
-                    <span className="text-accent font-medium">+{challenge.tokens} tokens</span>
+                  <div className="flex items-center gap-3 text-xs">
+                    <span className="text-primary font-semibold">+{challenge.xp} XP</span>
+                    <span className="text-accent font-semibold">+{challenge.tokens} tokens</span>
                   </div>
                 </motion.div>
               ))}
@@ -193,7 +193,7 @@ export const GamificationSection = () => {
               >
                 <Trophy className="w-5 h-5 text-primary" />
               </motion.div>
-              <h3 className="font-display text-xl font-semibold text-foreground">Global Leaderboard</h3>
+              <h3 className="font-subheading text-xl font-semibold text-foreground uppercase tracking-wide">Global Leaderboard</h3>
             </div>
 
             <div className="space-y-3">
@@ -207,7 +207,7 @@ export const GamificationSection = () => {
                   whileHover={{ scale: 1.02, x: 4 }}
                   className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
                     user.isUser 
-                      ? 'bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 shadow-sm' 
+                      ? 'bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/30 shadow-sm' 
                       : 'bg-muted'
                   }`}
                 >
@@ -222,9 +222,9 @@ export const GamificationSection = () => {
                     <p className={`font-medium truncate ${user.isUser ? 'text-primary' : 'text-foreground'}`}>
                       {user.name} {user.isUser && <span className="text-xs">(You)</span>}
                     </p>
-                    <p className="text-xs text-muted-foreground">{user.units} tokens</p>
+                    <p className="text-xs text-muted-foreground font-mono">{user.units} tokens</p>
                   </div>
-                  <span className={`font-display font-bold ${user.rank <= 3 ? 'text-accent' : 'text-muted-foreground'}`}>
+                  <span className={`font-mono font-bold ${user.rank <= 3 ? 'text-accent' : 'text-muted-foreground'}`}>
                     #{user.rank}
                   </span>
                 </motion.div>
@@ -240,7 +240,7 @@ export const GamificationSection = () => {
           viewport={{ once: true }}
           className="mt-12"
         >
-          <h3 className="font-display text-2xl font-semibold text-foreground text-center mb-8">Achievement Badges</h3>
+          <h3 className="font-heading text-3xl tracking-wider text-foreground text-center mb-8">ACHIEVEMENT BADGES</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
             {badges.map((badge, index) => (
               <motion.div
@@ -263,11 +263,11 @@ export const GamificationSection = () => {
                 </motion.div>
                 <p className="font-medium text-sm text-foreground mb-1">{badge.name}</p>
                 {badge.unlocked ? (
-                  <p className="text-xs text-primary">{badge.date}</p>
+                  <p className="text-xs text-primary font-mono">{badge.date}</p>
                 ) : (
                   <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
                     <Lock className="w-3 h-3" />
-                    {badge.progress}%
+                    <span className="font-mono">{badge.progress}%</span>
                   </div>
                 )}
               </motion.div>

@@ -92,21 +92,17 @@ export const CarbonImpactSection = () => {
   ];
 
   const handleShare = () => {
-    // BACKEND INTEGRATION POINT
-    // Example: await shareApi.shareImpact(stats.lifetimeCo2Saved);
     toast.success("Impact shared! (Backend integration needed)");
   };
 
   const handleDownloadCertificate = (certName: string) => {
-    // BACKEND INTEGRATION POINT
-    // Example: const pdf = await certificateApi.download(certName);
     toast.success(`Downloading ${certName}... (Backend integration needed)`);
   };
 
   return (
-    <section className="py-12 relative overflow-hidden">
-      <div className="absolute inset-0 gradient-dark" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] rounded-full bg-gradient-to-br from-primary/5 to-transparent blur-3xl" />
+    <section className="py-12 relative overflow-hidden bg-background">
+      <div className="absolute inset-0 grid-pattern opacity-20" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] rounded-full bg-gradient-to-br from-primary/10 to-transparent blur-3xl" />
 
       <div className="container relative z-10 px-4 lg:px-8">
         {/* Section Header */}
@@ -116,10 +112,19 @@ export const CarbonImpactSection = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Your Environmental <span className="text-primary text-glow">Impact</span>
+          <motion.div
+            initial={{ scale: 0 }}
+            whileInView={{ scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6"
+          >
+            <Leaf className="w-4 h-4 text-primary" />
+            <span className="text-sm text-primary font-medium uppercase tracking-wide">Environmental Impact</span>
+          </motion.div>
+          <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl tracking-wider mb-4">
+            YOUR CARBON <span className="text-gradient-teal">IMPACT</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-body">
             Track your contribution to a cleaner planet with real-time carbon savings.
           </p>
         </motion.div>
@@ -129,7 +134,7 @@ export const CarbonImpactSection = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="glass-card rounded-3xl p-8 md:p-12 text-center max-w-4xl mx-auto mb-12"
+          className="glass-card rounded-3xl p-8 md:p-12 text-center max-w-4xl mx-auto mb-12 neon-border"
         >
           <div className="flex items-center justify-center gap-3 mb-4">
             <Leaf className="w-8 h-8 text-primary animate-float" />
@@ -137,16 +142,17 @@ export const CarbonImpactSection = () => {
           </div>
           
           <motion.div
-            className="font-display text-6xl md:text-8xl font-bold text-primary text-glow mb-4"
+            className="font-mono text-6xl md:text-8xl font-bold text-primary mb-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            style={{ textShadow: '0 0 40px hsl(var(--primary) / 0.4)' }}
           >
             <AnimatedCounter value={stats.lifetimeCo2Saved} />
             <span className="text-3xl md:text-4xl text-foreground ml-2">kg</span>
           </motion.div>
 
-          <p className="text-muted-foreground mb-8">Equivalent Environmental Impact</p>
+          <p className="text-muted-foreground mb-8 uppercase tracking-wide text-sm">Equivalent Environmental Impact</p>
 
           {/* Impact Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -158,10 +164,10 @@ export const CarbonImpactSection = () => {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ scale: 1.05 }}
-                className="p-4 rounded-xl bg-muted/30"
+                className="p-4 rounded-xl bg-muted/50"
               >
                 <stat.icon className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="font-display text-2xl font-bold text-foreground">
+                <div className="font-mono text-2xl font-bold text-foreground">
                   <AnimatedCounter value={stat.value} />
                 </div>
                 <p className="text-sm text-foreground font-medium">{stat.label}</p>
@@ -179,21 +185,22 @@ export const CarbonImpactSection = () => {
             viewport={{ once: true }}
             className="glass-card p-6 rounded-2xl"
           >
-            <h3 className="font-display text-xl font-semibold text-foreground mb-6">Monthly CO₂ Savings</h3>
+            <h3 className="font-subheading text-xl font-semibold text-foreground mb-6 uppercase tracking-wide">Monthly CO₂ Savings</h3>
             
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={monthlyData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                   <XAxis 
                     dataKey="month" 
                     axisLine={false} 
                     tickLine={false}
-                    tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                    className="fill-muted-foreground text-xs"
                   />
                   <YAxis 
                     axisLine={false} 
                     tickLine={false}
-                    tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                    className="fill-muted-foreground text-xs"
                     unit=" kg"
                   />
                   <Tooltip 
@@ -207,16 +214,10 @@ export const CarbonImpactSection = () => {
                   />
                   <Bar 
                     dataKey="co2" 
-                    fill="url(#greenGradient)"
+                    fill="hsl(var(--primary))"
                     radius={[4, 4, 0, 0]}
                     animationDuration={1500}
                   />
-                  <defs>
-                    <linearGradient id="greenGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="hsl(var(--primary))" />
-                      <stop offset="100%" stopColor="hsl(var(--primary) / 0.6)" />
-                    </linearGradient>
-                  </defs>
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -229,7 +230,7 @@ export const CarbonImpactSection = () => {
             viewport={{ once: true }}
             className="glass-card p-6 rounded-2xl"
           >
-            <h3 className="font-display text-xl font-semibold text-foreground mb-6">Carbon Certificates</h3>
+            <h3 className="font-subheading text-xl font-semibold text-foreground mb-6 uppercase tracking-wide">Carbon Certificates</h3>
             
             <div className="space-y-4">
               {certificates.map((cert, index) => (
@@ -245,7 +246,7 @@ export const CarbonImpactSection = () => {
                       ? 'bg-primary/10 border-primary/30' 
                       : cert.status === 'in-progress'
                       ? 'bg-accent/10 border-accent/30'
-                      : 'bg-muted/30 border-border/50 opacity-60'
+                      : 'bg-muted/50 border-border opacity-60'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -254,10 +255,10 @@ export const CarbonImpactSection = () => {
                       <div>
                         <p className="font-medium text-foreground">{cert.name}</p>
                         {cert.status === 'unlocked' && (
-                          <p className="text-xs text-primary">Unlocked: {cert.date}</p>
+                          <p className="text-xs text-primary font-mono">Unlocked: {cert.date}</p>
                         )}
                         {cert.status === 'in-progress' && (
-                          <p className="text-xs text-accent">{cert.progress.toFixed(1)}% Complete</p>
+                          <p className="text-xs text-accent font-mono">{cert.progress.toFixed(1)}% Complete</p>
                         )}
                         {cert.status === 'locked' && (
                           <p className="text-xs text-muted-foreground">Locked</p>
@@ -269,7 +270,7 @@ export const CarbonImpactSection = () => {
                         <Button 
                           size="sm" 
                           variant="ghost" 
-                          className="h-8 w-8 p-0"
+                          className="h-8 w-8 p-0 text-primary hover:text-primary hover:bg-primary/10"
                           onClick={() => handleDownloadCertificate(cert.name)}
                         >
                           <Download className="w-4 h-4" />
@@ -277,7 +278,7 @@ export const CarbonImpactSection = () => {
                         <Button 
                           size="sm" 
                           variant="ghost" 
-                          className="h-8 w-8 p-0"
+                          className="h-8 w-8 p-0 text-primary hover:text-primary hover:bg-primary/10"
                           onClick={handleShare}
                         >
                           <Share2 className="w-4 h-4" />
@@ -291,7 +292,7 @@ export const CarbonImpactSection = () => {
 
             <div className="mt-6 pt-6 border-t border-border">
               <Button 
-                className="w-full bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display"
+                className="w-full btn-orange rounded-lg"
                 onClick={handleShare}
               >
                 <Share2 className="w-4 h-4 mr-2" />
